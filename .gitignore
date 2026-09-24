@@ -1,0 +1,59 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+dist/
+build/
+
+# Virtual environments and tool caches
+.venv/
+.pytest_cache/
+.ruff_cache/
+.pyright/
+.coverage
+htmlcov/
+
+# Jupyter
+.ipynb_checkpoints/
+notebooks/.virtual_documents/
+
+# IDE / OS
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# Credentials and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Private collection information and working notes
+private/
+
+# Locally captured or downloaded images
+data/raw/
+data/private/
+data/interim/
+data/processed/
+
+# Model weights, generated embeddings, and experiment outputs
+models/
+artifacts/
+checkpoints/
+runs/
+logs/
+*.pt
+*.pth
+*.onnx
+
+# Temporary files
+tmp/
+*.log
+
+# Local uv state that is not part of the lock
+.uv-cache/
+

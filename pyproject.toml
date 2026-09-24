@@ -1,0 +1,79 @@
+[project]
+name = "usagi-visual-catalog"
+version = "0.1.0"
+description = "Identify Chiikawa Usagi merchandise variants with computer vision"
+readme = "README.md"
+authors = [{ name = "Emma Tong" }]
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "imagehash>=4.3.2",
+    "matplotlib>=3.10.0",
+    "numpy>=2.2.0",
+    "pandas>=2.2.0",
+    "pillow>=11.0.0",
+    "pydantic>=2.10.0",
+    "pytorch-metric-learning>=2.8.0",
+    "rich>=14.0.0",
+    "scikit-learn>=1.6.0",
+    "torch>=2.8.0",
+    "torchvision>=0.23.0",
+    "transformers>=4.55.0,<6",
+    "typer>=0.16.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.11.0,<0.12.0"]
+build-backend = "uv_build"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "B", "UP", "SIM", "RUF", "D"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.pyright]
+pythonVersion = "3.12"
+typeCheckingMode = "strict"
+include = ["src", "tests"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = [
+    "-ra",
+    "--strict-config",
+    "--strict-markers",
+    "--import-mode=importlib",
+]
+
+[tool.coverage.run]
+branch = true
+source = ["usagi_visual_catalog"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+exclude_also = [
+    "if TYPE_CHECKING:",
+    "if __name__ == .__main__.:",
+]
+
+[dependency-groups]
+dev = [
+    "ipykernel>=7.0.0",
+    "jupyterlab>=4.4.0",
+    "pre-commit>=4.3.0",
+    "pyright>=1.1.405",
+    "pytest>=8.4.0",
+    "pytest-cov>=7.0.0",
+    "pytest-testmon>=2.2.0",
+    "ruff>=0.13.0",
+]
+
