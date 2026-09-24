@@ -1,5 +1,5 @@
 [project]
-name = "usagi-visual-catalog"
+name = "usagi-visual-identifier"
 version = "0.1.0"
 description = "Identify Chiikawa Usagi merchandise variants with computer vision"
 readme = "README.md"
@@ -55,7 +55,7 @@ addopts = [
 
 [tool.coverage.run]
 branch = true
-source = ["usagi_visual_catalog"]
+source = ["usagi_visual_identifier"]
 
 [tool.coverage.report]
 show_missing = true
@@ -76,4 +76,3 @@ dev = [
     "pytest-testmon>=2.2.0",
     "ruff>=0.13.0",
 ]
-

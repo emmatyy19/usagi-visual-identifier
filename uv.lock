@@ -2277,7 +2277,7 @@ wheels = [
 ]
 
 [[package]]
-name = "usagi-visual-catalog"
+name = "usagi-visual-identifier"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [

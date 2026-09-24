@@ -13,7 +13,7 @@ matches to structured catalog metadata.
 - Keep the first implementation local, small, and measurable.
 - Establish a frozen pretrained-embedding baseline before fine-tuning.
 - Treat visual identification and changing commerce data as separate systems.
-- Put reusable code under `src/usagi_visual_catalog/`; notebooks are for
+- Put reusable code under `src/usagi_visual_identifier/`; notebooks are for
   exploration and must not become application dependencies.
 - Record meaningful experiments under `docs/experiments/` using the template in
   that directory. Include failures and negative results.

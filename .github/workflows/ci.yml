@@ -42,7 +42,7 @@ jobs:
       - name: Run tests with coverage
         run: >
           uv run pytest
-          --cov=usagi_visual_catalog
+          --cov=usagi_visual_identifier
           --cov-report=term-missing
           --cov-fail-under=100
 
@@ -51,10 +51,9 @@ jobs:
 
       - name: Smoke test built wheel
         run: |
-          uv venv --python 3.12 "${RUNNER_TEMP}/usagi-catalog-smoke"
+          uv venv --python 3.12 "${RUNNER_TEMP}/usagi-identifier-smoke"
           uv pip install \
-            --python "${RUNNER_TEMP}/usagi-catalog-smoke/bin/python" \
+            --python "${RUNNER_TEMP}/usagi-identifier-smoke/bin/python" \
             dist/*.whl
-          "${RUNNER_TEMP}/usagi-catalog-smoke/bin/python" \
-            -c "import usagi_visual_catalog"
-
+          "${RUNNER_TEMP}/usagi-identifier-smoke/bin/python" \
+            -c "import usagi_visual_identifier"

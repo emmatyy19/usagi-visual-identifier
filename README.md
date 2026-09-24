@@ -1,4 +1,4 @@
-# Usagi Visual Catalog
+# Usagi Visual Identifier
 
 A learning-focused computer-vision project for recognizing specific Chiikawa
 Usagi merchandise variants from photographs and connecting confident matches

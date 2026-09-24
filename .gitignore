@@ -13,6 +13,7 @@ build/
 .pyright/
 .coverage
 htmlcov/
+.testmondata
 
 # Jupyter
 .ipynb_checkpoints/
@@ -56,4 +57,3 @@ tmp/
 
 # Local uv state that is not part of the lock
 .uv-cache/
-
