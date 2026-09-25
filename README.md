@@ -1,121 +1,116 @@
 # Usagi Visual Identifier
 
-A learning-focused computer-vision project for recognizing specific Chiikawa
-Usagi merchandise variants from photographs and connecting confident matches
-to useful catalog information.
+I am building a computer vision system that can look at a photo of a Chiikawa
+Usagi doll and identify the specific merchandise variant. Once the visual part
+works, I want to connect each result to useful information such as the release
+name, original price, current availability, and recent market prices.
 
-## Motivation
+## Why I am building this
 
-I originally wanted a small computer-vision project because my master's
-schedule will not leave room for a formal computer-vision course. I still want
-the hands-on part: collecting imperfect real data, choosing an honest
-evaluation, adapting a pretrained model, and learning from the mistakes it
-makes.
+I wanted a small computer vision project because my master's schedule will not
+leave room for a formal computer vision course. I still want the practical
+experience of collecting real data, defining a fair evaluation, adapting a
+pretrained model, and understanding why it makes mistakes.
 
-The idea became much more personal when I looked at my Chiikawa Usagi dolls. I
-am a fan, although very far from having a complete collection—some collectors
-have an entire wall of them. I have a handful that I especially like and was
-lucky enough to get, while many more variants exist than I could name or own.
-That made me curious whether a photograph could identify exactly which doll it
-is and eventually connect it to its release, availability, and market history.
+The idea became more personal when I looked at my Usagi dolls. I am a fan, but
+I am very far from having a complete collection. Some collectors have an entire
+wall of them. I have a handful that I especially like and was lucky enough to
+get. There are also many more variants that I do not own and cannot identify by
+name yet.
 
-Many Usagi dolls share the same face and body shape. The distinguishing evidence
-is often a small costume, hat, prop, embroidery detail, size difference, or
-release-specific accessory. That makes the collection a compact but meaningful
-fine-grained visual-recognition problem—and gives the technical work a reason I
-will still care about after the first model runs.
+That made me wonder whether I could take a photo of a doll and find out exactly
+which one it is. Many Usagi dolls share the same face and body shape, so the
+answer often depends on a small costume, hat, bow, prop, embroidery detail, or
+size difference. This makes the collection a fun and meaningful vision problem
+that I genuinely care about.
 
-This project is an alternative path toward hands-on computer-vision experience:
-build an honest baseline, collect a small real dataset, fine-tune a pretrained
-vision model on consumer hardware, analyze where it fails, and turn the result
-into a useful personal catalog.
+## What I want the first version to do
 
-## Initial problem
+The first version will receive one photo containing one doll. It will return:
 
-Given a photograph containing one cropped doll, return:
+1. The three most visually similar dolls in the known collection.
+2. A score that helps explain how confident the match is.
+3. An `unknown` result when the doll does not match anything in the collection.
 
-1. the most visually similar catalog entries;
-2. calibrated evidence indicating whether the best result is trustworthy; and
-3. an explicit `unknown` result when the pictured variant is absent from the
-   catalog.
+I will start with dolls that I own and can photograph myself. Group photos,
+unowned variants, product information, and market tracking will come later.
 
-The first milestone is deliberately limited to individually photographed dolls
-from the owner's collection. Detecting multiple dolls in a shelf photograph,
-identifying unowned products, and tracking market listings are later phases.
+## Why I am starting with image retrieval
 
-## Why retrieval rather than only classification?
+The collection can keep growing. A classifier works well when every possible
+class is known ahead of time, but it normally needs more training when a new
+doll is added.
 
-The catalog will grow. A closed classifier can perform well on known classes,
-but usually needs retraining when a new variant is introduced. The initial
-system instead represents each photograph with a pretrained visual embedding
-and retrieves nearby reference images. This provides a useful no-training
-baseline and supports adding reference entries incrementally.
+The first system will use a pretrained vision model to turn each photo into a
+numeric representation called an embedding. It will compare a new photo with
+stored reference photos and return the closest matches. This gives me a useful
+baseline before any training and makes it easier to add another doll later.
 
-Fine-tuning remains a central learning objective. The planned experiments move
-from frozen embeddings, to a linear classifier, to partial backbone fine-tuning,
-and finally to supervised metric learning. Each stage must earn its complexity
-through held-out evaluation.
+I still want hands on experience with training. I plan to compare frozen
+embeddings, a linear classifier, partial model tuning, and metric learning. I
+will only keep the extra complexity when the evaluation shows that it helps.
 
-## Planned system boundary
+## Planned flow
 
 ```text
-single-doll photo
-       |
-       v
-preprocessing and crop validation
-       |
-       v
-vision encoder -> normalized embedding -> nearest catalog references
-                                             |
-                               confidence / unknown decision
-                                             |
-                                             v
-                                  local catalog metadata
+photo
+  ↓
+image validation and preprocessing
+  ↓
+vision model
+  ↓
+normalized embedding
+  ↓
+similarity search against reference photos
+  ↓
+confidence check
+  ↓
+known identity or unknown result
+  ↓
+local product information
 ```
 
-Commerce information is intentionally outside the visual model. A successful
-identity becomes a stable catalog key that can later join to release details,
-official availability, and time-stamped marketplace observations.
+The vision model will only decide which doll is pictured. Product information
+and changing market data will remain separate so they can be updated without
+changing the model.
 
-## Learning questions
+## What I want to learn
 
-- How well do general-purpose visual embeddings separate nearly identical
-  merchandise variants without training?
-- Which augmentations improve robustness without erasing identity-defining
-  details?
-- Does a linear probe outperform nearest-neighbor retrieval?
-- How much does partial fine-tuning improve held-out capture sessions?
-- Can metric learning improve retrieval while still allowing new catalog
-  entries to be added without retraining a classifier?
-- How reliably can the system reject a variant it has never seen?
-- Which visual details cause the most common confusions?
+1. How well can a general vision model distinguish nearly identical dolls
+   without training?
+2. Which image changes make the system more reliable without hiding the small
+   details that identify a doll?
+3. Does a simple linear classifier improve on image retrieval?
+4. How much does partial model tuning help on photos from a different session?
+5. Can metric learning improve retrieval while still letting me add new dolls?
+6. How reliably can the system reject a doll it has never seen?
+7. Which visual details cause the most common mistakes?
 
 ## Documentation
 
-- [Roadmap](docs/roadmap.md) tracks milestone-level progress.
-- [Visual identification design](docs/design/001-visual-identification.md)
-  defines the initial technical and experimental contract.
-- [Dataset protocol](docs/data/dataset-protocol.md) defines capture, labeling,
-  splitting, privacy, and provenance rules.
-- [Photo capture guide](docs/data/photo-capture-guide.md) gives the exact first
-  photography workflow, shot list, and folder layout.
-- [Evaluation plan](docs/evaluation.md) defines metrics, slices, comparisons,
-  and promotion gates.
-- [Experiment records](docs/experiments/README.md) will document results and
-  design changes as the project develops.
+1. The [roadmap](docs/roadmap.md) tracks the planned milestones.
+2. The [visual identification design](docs/design/001-visual-identification.md)
+   explains the technical plan and experiment rules.
+3. The [dataset protocol](docs/data/dataset-protocol.md) explains labeling,
+   data splits, privacy, and provenance.
+4. The [photo capture guide](docs/data/photo-capture-guide.md) gives the exact
+   first photo workflow, shot list, and folder structure.
+5. The [evaluation plan](docs/evaluation.md) defines the metrics and comparison
+   rules.
+6. The [experiment records](docs/experiments/README.md) will document what I
+   tried, what happened, and what changed afterward.
 
-## Project status
+## Current status
 
-Foundation. The problem, data protocol, evaluation rules, and roadmap are
-defined. The repository now has a reproducible Python environment and quality
-tooling; dataset inventory and capture are next.
+The planning and repository setup are complete. The next work is the private
+doll inventory, the first photo sessions, and the dataset validation tools.
 
 ## Development setup
 
-The project uses Python 3.12 and [`uv`](https://docs.astral.sh/uv/) for Python,
-dependency, environment, and package management.
+This project uses Python 3.12 and [`uv`](https://docs.astral.sh/uv/) to manage
+Python, dependencies, the virtual environment, and the package build.
 
-Create the locked environment, including development tools:
+Create the locked environment:
 
 ```bash
 uv sync --all-groups
@@ -127,22 +122,20 @@ Install the Git hooks:
 uv run pre-commit install
 ```
 
-Confirm that PyTorch can see the intended accelerator:
+Check whether PyTorch can use the available accelerator:
 
 ```bash
-uv run python -c "import torch; print(torch.__version__); print(torch.cuda.is_available())"
+uv run python -c "import torch; print(torch.__version__); print(torch.cuda.is_available()); print(torch.cuda.get_device_name() if torch.cuda.is_available() else 'No CUDA')"
 ```
 
-`torch.cuda.is_available()` should be `True` on the RTX 3060 machine. A false
-result does not mean the project is broken: CPU and Apple Metal environments
-remain useful for development, but the NVIDIA machine may need a PyTorch build
-matched to its driver. Record that machine's operating system, driver, GPU
-memory, and PyTorch CUDA version before changing the locked source configuration.
+The GPU environment has been tested on an NVIDIA GeForce RTX 3060 with 12 GB of
+memory. PyTorch 2.14.0 with CUDA 13.0 detects the GPU correctly. The project can
+also run on a CPU or Apple Metal for development and smaller tests.
 
-The runtime stack includes PyTorch and torchvision, Hugging Face Transformers,
-Pillow and ImageHash, NumPy and pandas, scikit-learn, PyTorch Metric Learning,
-Matplotlib, Pydantic, Typer, and Rich. The development group adds JupyterLab,
-Ruff, strict Pyright, pytest with coverage, and pre-commit.
+The main libraries are PyTorch, torchvision, Transformers, PyTorch Metric
+Learning, Pillow, ImageHash, NumPy, pandas, `scikit-learn`, Matplotlib, Pydantic,
+Typer, and Rich. Development tools include JupyterLab, Ruff, Pyright, pytest,
+coverage, and `pre-commit`.
 
 ## Quality checks
 
@@ -158,7 +151,7 @@ uv build
 
 ## Privacy and rights
 
-Personal photographs, collection inventory, purchase details, credentials,
-downloaded product images, generated embeddings, and model artifacts remain
-local and are excluded from Git. Public examples will be added only when their
-redistribution rights and identifying content have been reviewed.
+My photos, collection inventory, purchase details, credentials, downloaded
+product images, generated embeddings, and model files stay local and are
+excluded from Git. I will only publish an example image after checking that I
+have the right to share it and that it contains no private information.
