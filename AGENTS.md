@@ -24,6 +24,14 @@ matches to structured catalog metadata.
 - Only commit images whose redistribution rights are understood. Prefer tiny
   invented fixtures for automated tests.
 
+## Writing style
+
+Write public documentation in a direct, natural, first person voice that sounds
+like the repository owner. Prefer short sentences and straightforward wording.
+Avoid em dashes, en dashes, and hyphens used as sentence punctuation. Avoid
+hyphenated wording when a normal alternative is clear. Hyphens required by
+commands, package names, identifiers, and file paths are allowed.
+
 ## Evaluation discipline
 
 - Split photographs by capture session, not by randomly splitting adjacent
