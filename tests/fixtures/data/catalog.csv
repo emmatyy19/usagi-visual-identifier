@@ -1,0 +1,4 @@
+catalog_id,display_name,label_status,distinguishing_cues,product_type,included_in_model
+usagi-0001,Yellow Bow Usagi,verified,yellow bow|white dress,plush,true
+usagi-0002,Gray Hat Usagi,verified,gray hat|pink outfit,plush,true
+usagi-0003,Blue Cap Usagi,provisional,blue cap,plush,false
