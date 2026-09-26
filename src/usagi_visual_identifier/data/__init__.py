@@ -15,6 +15,11 @@ from usagi_visual_identifier.data.models import (
     ImageSource,
     LabelStatus,
 )
+from usagi_visual_identifier.data.preparation import (
+    PreparationError,
+    PreparationResult,
+    prepare_session,
+)
 
 __all__ = [
     "Catalog",
@@ -25,7 +30,10 @@ __all__ = [
     "ImageRecord",
     "ImageSource",
     "LabelStatus",
+    "PreparationError",
+    "PreparationResult",
     "dataset_fingerprint",
     "load_catalog_csv",
     "load_image_manifest_csv",
+    "prepare_session",
 ]

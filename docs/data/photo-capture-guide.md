@@ -6,16 +6,16 @@ collection yet.
 
 ## Target result
 
-Photograph three dolls in three genuinely different sessions:
+Photograph the current seven dolls in three genuinely different sessions:
 
-- one doll that looks obviously different from the others;
-- two dolls that you expect the model might confuse; and
-- 15 useful photographs of each doll in each session.
+- include dolls that look obviously different from one another;
+- include dolls that the model might confuse; and
+- collect about 14 or 15 useful photographs of each doll in each session.
 
-That produces approximately 135 images:
+That produces approximately 294 to 315 images:
 
 ```text
-3 dolls x 3 sessions x 15 photographs = 135 photographs
+7 dolls x 3 sessions x about 14 or 15 photographs = 294 to 315 photographs
 ```
 
 Session 1 becomes the initial reference gallery and training split. Session 2
@@ -23,14 +23,18 @@ is validation data. Session 3 remains untouched test data. This is a pilot, so
 the goal is to validate the workflow and expose failure modes rather than claim
 a final accuracy result.
 
-## Step 1: Choose and label the three dolls
+## Step 1: Label the known dolls
 
 Open the private inventory and assign stable IDs before taking photographs:
 
 ```text
-usagi-0001  visually distinctive doll
-usagi-0002  first similar-looking doll
-usagi-0003  second similar-looking doll
+usagi-0001  Matcha ice cream
+usagi-0002  Airport
+usagi-0003  Bakery
+usagi-0004  Magical
+usagi-0005  Pompompurin
+usagi-0006  Chiikawa Park fluffy
+usagi-0007  Lobster claws
 ```
 
 Names can change after product research; IDs should not. For each doll, write
@@ -51,11 +55,11 @@ For every session:
 4. Turn off beauty filters, color filters, and artificial background blur.
 5. Keep full-resolution originals; do not send them through a messaging app.
 6. Photograph one doll at a time.
-7. Keep product tags and barcodes turned away unless they are permanently part
-   of the visible design. The model should recognize the doll, not printed text.
+7. Include a mix of naturally visible, partial, and hidden product tags. The
+   model should not require printed text to recognize the doll.
 8. Remove mail, faces, screens, mirrors, location clues, and identifying papers
    from the frame.
-9. Use the same scene for all three dolls during that session.
+9. Use the same scene for every doll during that session.
 
 Using the same scene for every identity is essential. If each doll gets a
 different background, the model may learn the background instead of the doll.
@@ -75,10 +79,14 @@ data/private/images/
 │   ├── session-001/
 │   ├── session-002/
 │   └── session-003/
-└── usagi-0003/
+├── usagi-0003/
     ├── session-001/
     ├── session-002/
     └── session-003/
+├── usagi-0004/
+├── usagi-0005/
+├── usagi-0006/
+└── usagi-0007/
 ```
 
 These folders are ignored by Git. Back up the originals separately; Git is not
@@ -87,10 +95,10 @@ the photo backup.
 ## Step 4: Capture session 001
 
 Use a simple background and soft, even light. Place one doll in the scene and
-take the following 15 photographs. Then repeat the same sequence for the other
-two dolls before changing the setup.
+use the following checklist to take about 14 or 15 photographs. Then repeat it
+for the other dolls before changing the setup.
 
-### Required 15-shot sequence
+### Suggested 15 view checklist
 
 1. Straight front, entire doll filling about 70% of the frame.
 2. Straight front, entire doll filling about 45% of the frame.
@@ -108,6 +116,11 @@ two dolls before changing the setup.
 14. A natural handheld photograph with slightly imperfect framing.
 15. One additional view that clearly shows this doll's most distinctive cue.
 
+The order does not matter. File numbers identify photographs, not camera
+angles. It is also fine to skip a view when it would be nearly identical to
+another photograph. Useful variation matters more than making every identity
+follow the same sequence.
+
 Move deliberately between photographs. Do not hold the shutter for a burst of
 nearly identical frames. Keep the doll's costume and removable accessories in
 their normal configuration throughout the dataset.
@@ -116,19 +129,19 @@ their normal configuration throughout the dataset.
 
 Wait until another time of day or another day. Change several nuisance factors:
 
-- use a different background shared by all three dolls;
+- use a different background shared by every doll;
 - change natural versus artificial lighting;
 - change camera distance and framing; and
 - pose the dolls again rather than reproducing session 001 exactly.
 
-Repeat the same 15-shot sequence for all three dolls. Do not look at model
-results before completing this session. This session is validation data used
-for design and threshold choices.
+Repeat the same view checklist for every doll. Do not look at model results
+before completing this session. This session is validation data used for design
+and threshold choices.
 
 ## Step 6: Capture session 003 separately
 
 On another occasion, use a third shared setup. A different room or surface is
-ideal. Repeat the 15-shot sequence for every doll.
+ideal. Repeat the view checklist for every doll.
 
 After import, treat session 003 as sealed test data:
 
@@ -145,13 +158,13 @@ For each session:
 1. Transfer original files directly from the phone.
 2. Put each image into the correct doll and session folder.
 3. Do not resize, crop, edit, or recompress the originals.
-4. Keep the original filename until the manifest importer exists.
+4. Run the matching data preparation launch after organizing the originals.
 5. Delete obvious accidents only: unintended frames, severe blur, or corrupted
    files. Record the reason in private notes.
 6. Never move one image to another session merely to balance counts.
 
-The future preprocessing pipeline will create model inputs from the originals
-without modifying them.
+The preparation pipeline creates model inputs from the originals without
+modifying them.
 
 ## Step 8: Perform the manual audit
 
@@ -162,7 +175,7 @@ Before modeling, check every imported photograph:
 - identity-defining features are visible in most images;
 - no face, mail, screen, reflection, or identifying document is visible;
 - images open correctly and retain their intended orientation;
-- every session used the same background across all three identities; and
+- every session used the same background across all identities; and
 - session 003 has not been copied into any other split.
 
 Do not publish or commit these images. Even owner-captured examples stay private
@@ -170,7 +183,7 @@ until they are deliberately reviewed for public use and metadata removal.
 
 ## Step 9: Add unknown examples after the known pilot
 
-Once the three known identities are complete, photograph a small unknown set:
+Once the known identities are complete, photograph a small unknown set:
 
 - for validation, use one or two other plush toys or excluded variants;
 - for final testing, use different objects not present in validation; and
@@ -183,11 +196,10 @@ model must reject products it did not encounter while selecting the threshold.
 
 The pilot is ready for the manifest and frozen-embedding baseline when:
 
-- three identities have stable IDs;
-- each identity has 15 useful images in each of three sessions;
+- seven identities have stable IDs;
+- each identity has about 14 or 15 useful images in each of three sessions;
 - backgrounds are shared across identities within every session;
 - the three sessions differ meaningfully;
 - session 003 is still sealed;
 - all images pass the manual privacy and label audit; and
 - the originals are backed up outside the Git repository.
-
