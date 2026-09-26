@@ -23,6 +23,7 @@ notebooks/.virtual_documents/
 .DS_Store
 .vscode/*
 !.vscode/extensions.json
+!.vscode/launch.json
 !.vscode/settings.json
 
 # Credentials and local configuration

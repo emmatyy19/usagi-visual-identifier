@@ -99,11 +99,16 @@ changing the model.
    rules.
 6. The [experiment records](docs/experiments/README.md) will document what I
    tried, what happened, and what changed afterward.
+7. The [data preparation guide](docs/data/data-preparation.md) explains how I
+   turn private phone photos into validated model inputs.
 
 ## Current status
 
-The planning and repository setup are complete. The next work is the private
-doll inventory, the first photo sessions, and the dataset validation tools.
+The planning and repository setup are complete. The first capture session has
+been collected, and the data preparation pipeline can now validate the private
+manifest, convert HEIC originals into model ready JPEG copies, and create visual
+audit sheets. The next work is the pretrained embedding baseline and two more
+independent photo sessions.
 
 ## Development setup
 

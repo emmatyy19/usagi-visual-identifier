@@ -11,6 +11,7 @@ dependencies = [
     "numpy>=2.2.0",
     "pandas>=2.2.0",
     "pillow>=11.0.0",
+    "pillow-heif>=1.1.0",
     "pydantic>=2.10.0",
     "pytorch-metric-learning>=2.8.0",
     "rich>=14.0.0",
@@ -42,7 +43,7 @@ indent-style = "space"
 [tool.pyright]
 pythonVersion = "3.12"
 typeCheckingMode = "strict"
-include = ["src", "tests"]
+include = ["src", "tests", "scripts"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
