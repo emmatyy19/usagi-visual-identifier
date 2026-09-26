@@ -71,7 +71,7 @@ def test_catalog_loader_rejects_invalid_boolean(tmp_path: Path) -> None:
         encoding="utf-8",
     )
 
-    with pytest.raises(DataLoadError, match="expected true or false"):
+    with pytest.raises(DataLoadError, match="must be true or false"):
         load_catalog_csv(path=path)
 
 
