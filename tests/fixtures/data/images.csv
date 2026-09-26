@@ -1,0 +1,8 @@
+image_id,relative_path,catalog_id,unknown_identity_id,capture_session_id,source_image_id,split,source
+img-000001,images/usagi-0001/session-001/001.jpg,usagi-0001,,session-001,src-000001,train,synthetic
+img-000002,images/usagi-0002/session-001/001.jpg,usagi-0002,,session-001,src-000002,train,synthetic
+img-000003,images/usagi-0001/session-002/001.jpg,usagi-0001,,session-002,src-000003,validation,synthetic
+img-000004,images/usagi-0002/session-002/001.jpg,usagi-0002,,session-002,src-000004,validation,synthetic
+img-000005,images/usagi-0001/session-003/001.jpg,usagi-0001,,session-003,src-000005,test,synthetic
+img-000006,images/usagi-0002/session-003/001.jpg,usagi-0002,,session-003,src-000006,test,synthetic
+img-000007,images/unknown/unknown-0001/session-004/001.jpg,,unknown-0001,session-004,src-000007,validation,synthetic

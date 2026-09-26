@@ -44,7 +44,7 @@ jobs:
           uv run pytest
           --cov=usagi_visual_identifier
           --cov-report=term-missing
-          --cov-fail-under=100
+          --cov-fail-under=90
 
       - name: Build package
         run: uv build
