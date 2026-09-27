@@ -104,25 +104,25 @@ changing the model.
 8. The [frozen DINOv2 baseline](docs/baselines/frozen-dinov2.md) explains the
    first embedding and retrieval experiment.
 9. The [embedding walkthrough](notebooks/embedding_baseline_walkthrough.ipynb)
-   provides an executed visual showcase of the baseline results and all 98
-   Session 1 photographs.
+   provides an executed visual showcase of the baseline results, all 98
+   Session 1 photographs, and all 42 Session 2 validation photographs.
 10. The [aggregation comparison](docs/baselines/aggregation-comparison.md)
     explains the four frozen retrieval rules and how to compare them fairly.
 
 ## Current status
 
-The planning and repository setup are complete. The first capture session has
-been collected and prepared, and the frozen DINOv2 embedding baseline can run
-locally on Apple Metal, NVIDIA CUDA, or CPU. The Session 1 result is only a
-pipeline sanity check. The next meaningful measurement requires an independent
-Session 2, while Session 3 will remain sealed for final testing.
+The first two capture sessions have been collected and prepared. Session 1 has
+98 training photographs and Session 2 has 42 independent validation
+photographs. All four frozen DINOv2 aggregation rules correctly identified all
+42 Session 2 queries. Since the added aggregation complexity did not improve
+the validation metrics, nearest image remains the preferred frozen baseline.
 
-After those sessions are ready, I will compare nearest image retrieval,
-identity prototypes, top k identity means, and similarity weighted neighbor
-voting without changing the encoder. Then I will train a linear classification
-head while DINOv2 stays frozen. Partial tuning of the final transformer block
-comes after that. Metric learning and patch level matching will only be added
-when the earlier results give a clear reason to try them.
+I will capture Session 3 under another setup now and keep it sealed for final
+testing. Before opening it, I will add unknown validation examples, measure
+latency, train a linear classification head while DINOv2 stays frozen, and try
+partial tuning of the final transformer block. Metric learning and patch level
+matching will only be added when the earlier results give a clear reason to try
+them.
 
 ## Development setup
 
@@ -171,8 +171,9 @@ uv build
 ## Privacy and rights
 
 The showcase notebook includes reviewed, resized renderings of the doll photos
-I took for Session 1. I am comfortable sharing those images as part of this
-project, and the prepared copies do not include the original photo metadata.
+I took for Session 1 and Session 2. I am comfortable sharing those images as
+part of this project, and the prepared copies do not include the original photo
+metadata.
 
 The original HEIC files, standalone prepared dataset, collection inventory,
 purchase details, credentials, downloaded third party images, generated

@@ -38,14 +38,15 @@ must not share an unknown rejection threshold with the other methods.
 First build the DINOv2 embedding artifact. Then open Run and Debug in VS Code
 and select `Compare Retrieval Aggregations`.
 
-The current launch compares the training split with itself using leave one out
-evaluation. It writes:
+The debugger launch compares the Session 1 training gallery with Session 2
+validation queries. It writes:
 
 ```text
-artifacts/evaluations/dinov2_small/aggregation_comparison_train_to_train.json
+artifacts/evaluations/dinov2_small/aggregation_comparison_train_to_validation.json
 ```
 
-The report is a local generated artifact and is excluded from Git.
+The report is a local generated artifact and is excluded from Git. The Session
+1 implementation check remains available by setting both splits to `train`.
 
 ## Explore it visually
 
@@ -53,8 +54,8 @@ The aggregation section in the
 [`embedding_baseline_walkthrough.ipynb`](../../notebooks/embedding_baseline_walkthrough.ipynb)
 notebook compares the aggregate metrics, per identity accuracy, prediction
 disagreements, changed errors, reference evidence, weighted votes, and prototype
-construction. The committed notebook already contains the executed Session 1
-outputs.
+construction. It also includes all 42 Session 2 photographs, the validation
+metrics, score and margin distributions, and the closest correct decisions.
 
 ## Session 1 implementation check
 
@@ -79,10 +80,28 @@ obvious behavior differences. It cannot select the preferred method because
 the gallery and queries share one capture session. The report records this as
 an exploratory same split comparison and sets `selection_allowed` to `false`.
 
-After Session 2 is prepared, change `USAGI_QUERY_SPLIT` in the debugger launch
-to `validation`. Keep `USAGI_GALLERY_SPLIT` set to `train`. Session 2 results
-may be used to choose the aggregation rule and its parameters. Session 3 must
-remain untouched until that choice and the later model decisions are frozen.
+## Session 2 validation result
+
+The Session 1 gallery contains 98 images. Session 2 contributes 42 independent
+validation queries, six for each identity.
+
+| Method | Top 1 | Top 3 | Macro recall | MRR |
+| --- | ---: | ---: | ---: | ---: |
+| Nearest image | 1.000 | 1.000 | 1.000 | 1.000 |
+| Identity prototype | 1.000 | 1.000 | 1.000 | 1.000 |
+| Top k mean | 1.000 | 1.000 | 1.000 | 1.000 |
+| Weighted neighbors | 1.000 | 1.000 | 1.000 | 1.000 |
+
+All methods tie on every primary metric. Nearest image remains the preferred
+frozen baseline because it is the simplest tied rule and preserves a direct
+reference image for every prediction. Several Lobster and Airport side views
+have narrow first versus second place margins, so future capture sessions
+should continue to include these difficult views.
+
+This is not a universal 100 percent accuracy claim. The validation set is
+small, contains only known identities, and shares one Session 2 setup. Unknown
+rejection still needs its own validation examples and operating threshold.
+Session 3 remains sealed until all model and threshold choices are frozen.
 
 ## Evidence in each result
 

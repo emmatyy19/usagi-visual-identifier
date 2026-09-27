@@ -7,10 +7,12 @@ belong in the Git-ignored `private/` directory.
 ## Current position
 
 The repository contains seven catalog identities, 98 prepared Session 1
-photographs, a reproducible data preparation pipeline, and a frozen DINOv2
-retrieval sanity check. The current priority is collecting independent Session
-2 validation photographs and sealed Session 3 test photographs before choosing
-an aggregation rule or training a model.
+training photographs, 42 prepared Session 2 validation photographs, and a
+reproducible frozen DINOv2 retrieval baseline. All four aggregation rules
+correctly classified every Session 2 query, so nearest image remains the
+preferred rule because it is the simplest tied method and preserves direct
+reference provenance. The current priority is capturing Session 3 under a new
+setup and sealing it before any further model choices.
 
 The modeling order is frozen retrieval, simple aggregation comparisons, a
 linear probe, partial tuning of the final transformer block, and then retrieval
@@ -63,6 +65,7 @@ prove that no capture session or source image crosses dataset splits.
 - [ ] Collect non-Usagi plushes and excluded Usagi variants as unknown examples
 - [x] Audit Session 1 duplicates, corrupted images, labels, and personal data
 - [x] Publish a reviewed Session 1 summary without the original HEIC files
+- [x] Audit and publish the reviewed Session 2 validation summary
 
 ### Exit criteria
 
@@ -76,11 +79,12 @@ audit passes.
 - [x] Build a brute-force cosine-similarity index
 - [x] Support one or many reference images per catalog item
 - [x] Implement nearest image, prototype, top k mean, and weighted neighbor rules
-- [ ] Compare the four rules on Session 2 and choose one with validation results
+- [x] Compare the four rules on Session 2 and choose one with validation results
 - [x] Return top-k matches with distances and reference provenance
 - [x] Evaluate top-1, top-3, per-class recall, and common confusion pairs
 - [ ] Measure CPU and GPU inference latency
 - [x] Record the Session 1 sanity check as Experiment 001
+- [x] Record the Session 2 validation comparison as Experiment 002
 
 ### Exit criteria
 
@@ -94,7 +98,7 @@ baseline on untouched capture sessions.
 - [ ] Compare classification accuracy with nearest-neighbor retrieval
 - [ ] Inspect calibration and confidence failure cases
 - [ ] Document how adding a catalog identity differs between both approaches
-- [ ] Record the comparison as Experiment 002
+- [ ] Record the comparison as Experiment 003
 
 ### Exit criteria
 
@@ -110,7 +114,7 @@ tradeoff between fixed-class prediction and incremental retrieval.
 - [ ] Compare against the frozen retrieval and linear-probe baselines
 - [ ] Run ablations for augmentation and trainable depth
 - [ ] Inspect attention or nearest-neighbor examples for qualitative evidence
-- [ ] Record the results as Experiment 003
+- [ ] Record the results as Experiment 004
 
 ### Exit criteria
 
@@ -125,7 +129,7 @@ as unnecessary based on the evidence.
 - [ ] Fine-tune a projection head and then, if justified, the final backbone block
 - [ ] Evaluate recall at k and embedding-space separation
 - [ ] Test adding a held-out identity using references without retraining
-- [ ] Record the results as Experiment 004
+- [ ] Record the results as Experiment 005
 
 ### Exit criteria
 
