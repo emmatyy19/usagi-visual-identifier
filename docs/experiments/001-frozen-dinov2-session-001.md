@@ -56,6 +56,22 @@ Session 2 and Session 3 remained absent and therefore untouched.
 | Embedding time | 4.78 seconds |
 | Throughput | 20.50 images per second |
 
+### Exploratory aggregation check
+
+The completed comparison implementation also ran four aggregation rules on the
+same Session 1 leave one out protocol.
+
+| Method | Top 1 | Top 3 | Macro recall | MRR |
+| --- | ---: | ---: | ---: | ---: |
+| Nearest image | 0.918 | 0.980 | 0.918 | 0.953 |
+| Identity prototype | 0.980 | 1.000 | 0.980 | 0.990 |
+| Top k mean | 0.969 | 1.000 | 0.969 | 0.983 |
+| Weighted neighbors | 0.929 | 0.980 | 0.929 | 0.958 |
+
+These values are implementation evidence, not model selection evidence. The
+prototype result cannot become the preferred rule until Session 2 confirms its
+behavior on independent photographs.
+
 ## Failure analysis
 
 Six of the eight incorrect top 1 queries used either the shared blanket

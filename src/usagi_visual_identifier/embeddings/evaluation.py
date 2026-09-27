@@ -2,12 +2,18 @@
 
 import json
 from collections import Counter, defaultdict
+from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
 import numpy as np
 
 from usagi_visual_identifier.data.models import DatasetSplit
+from usagi_visual_identifier.embeddings.aggregation import (
+    DEFAULT_AGGREGATION_CONFIG,
+    AggregationConfig,
+    rank_gallery_identities,
+)
 from usagi_visual_identifier.embeddings.artifacts import (
     EmbeddingArtifact,
     EmbeddingError,
@@ -21,6 +27,7 @@ class RetrievalReport:
     gallery_split: str
     query_split: str
     leave_one_out: bool
+    aggregation: AggregationConfig
     query_count: int
     identity_count: int
     top1_accuracy: float
@@ -33,10 +40,11 @@ class RetrievalReport:
     def as_dict(self) -> dict[str, object]:
         """Return a JSON ready representation."""
         return {
-            "schema_version": 1,
+            "schema_version": 2,
             "gallery_split": self.gallery_split,
             "query_split": self.query_split,
             "leave_one_out": self.leave_one_out,
+            "aggregation": self.aggregation.as_dict(),
             "query_count": self.query_count,
             "identity_count": self.identity_count,
             "top1_accuracy": self.top1_accuracy,
@@ -55,6 +63,30 @@ class RetrievalReport:
         }
 
 
+@dataclass(frozen=True)
+class AggregationComparisonReport:
+    """Retrieval reports produced from one shared gallery and query split."""
+
+    gallery_split: str
+    query_split: str
+    exploratory_same_split: bool
+    evaluation_role: str
+    selection_allowed: bool
+    reports: tuple[RetrievalReport, ...]
+
+    def as_dict(self) -> dict[str, object]:
+        """Return a JSON ready comparison report."""
+        return {
+            "schema_version": 1,
+            "gallery_split": self.gallery_split,
+            "query_split": self.query_split,
+            "exploratory_same_split": self.exploratory_same_split,
+            "evaluation_role": self.evaluation_role,
+            "selection_allowed": self.selection_allowed,
+            "reports": [report.as_dict() for report in self.reports],
+        }
+
+
 def _indices_for_split(
     *, artifact: EmbeddingArtifact, split: DatasetSplit
 ) -> list[int]:
@@ -70,8 +102,9 @@ def evaluate_retrieval(
     gallery_split: DatasetSplit,
     query_split: DatasetSplit,
     top_k: int = 3,
+    aggregation: AggregationConfig = DEFAULT_AGGREGATION_CONFIG,
 ) -> RetrievalReport:
-    """Rank identities by their nearest reference image cosine score."""
+    """Rank identities with one configured reference aggregation rule."""
     if top_k < 1:
         raise EmbeddingError("top_k must be positive")
     gallery_indices = _indices_for_split(artifact=artifact, split=gallery_split)
@@ -106,20 +139,16 @@ def evaluate_retrieval(
             for index in gallery_indices
             if not (leave_one_out and index == query_index)
         ]
-        query_embedding = artifact.embeddings[query_index]
-        identity_scores: dict[str, float] = {}
-        reference_ids: dict[str, str] = {}
-        for gallery_index in eligible_gallery:
-            identity_id = artifact.identity_ids[gallery_index]
-            score = float(np.dot(query_embedding, artifact.embeddings[gallery_index]))
-            if (
-                identity_id not in identity_scores
-                or score > identity_scores[identity_id]
-            ):
-                identity_scores[identity_id] = score
-                reference_ids[identity_id] = artifact.image_ids[gallery_index]
-
-        ranked = sorted(identity_scores, key=identity_scores.__getitem__, reverse=True)
+        matches = rank_gallery_identities(
+            query_embedding=artifact.embeddings[query_index],
+            gallery_embeddings=artifact.embeddings[eligible_gallery],
+            gallery_identity_ids=[
+                artifact.identity_ids[index] for index in eligible_gallery
+            ],
+            gallery_image_ids=[artifact.image_ids[index] for index in eligible_gallery],
+            config=aggregation,
+        )
+        ranked = [match.identity_id for match in matches]
         true_identity = artifact.identity_ids[query_index]
         if true_identity not in ranked:
             raise EmbeddingError(
@@ -142,11 +171,17 @@ def evaluate_retrieval(
                 "true_identity_rank": rank,
                 "ranked_identities": [
                     {
-                        "identity_id": identity_id,
-                        "score": identity_scores[identity_id],
-                        "reference_image_id": reference_ids[identity_id],
+                        "identity_id": match.identity_id,
+                        "score": match.score,
+                        "reference_image_id": (
+                            match.reference_image_ids[0]
+                            if match.reference_image_ids
+                            else None
+                        ),
+                        "reference_image_ids": list(match.reference_image_ids),
+                        "reference_similarities": list(match.reference_similarities),
                     }
-                    for identity_id in ranked[:top_k]
+                    for match in matches[:top_k]
                 ],
             }
         )
@@ -167,6 +202,7 @@ def evaluate_retrieval(
         gallery_split=gallery_split.value,
         query_split=query_split.value,
         leave_one_out=leave_one_out,
+        aggregation=aggregation,
         query_count=query_count,
         identity_count=len(gallery_identities),
         top1_accuracy=top1_correct / query_count,
@@ -178,12 +214,75 @@ def evaluate_retrieval(
     )
 
 
+def compare_retrieval_aggregations(
+    *,
+    artifact: EmbeddingArtifact,
+    gallery_split: DatasetSplit,
+    query_split: DatasetSplit,
+    configurations: Sequence[AggregationConfig],
+    top_k: int = 3,
+) -> AggregationComparisonReport:
+    """Evaluate several aggregation rules against identical query rows."""
+    if not configurations:
+        raise EmbeddingError("at least one aggregation configuration is required")
+    configuration_keys = {
+        (
+            configuration.method,
+            configuration.reference_count,
+            configuration.temperature,
+        )
+        for configuration in configurations
+    }
+    if len(configuration_keys) != len(configurations):
+        raise EmbeddingError("aggregation configurations must be unique")
+    reports = tuple(
+        evaluate_retrieval(
+            artifact=artifact,
+            gallery_split=gallery_split,
+            query_split=query_split,
+            top_k=top_k,
+            aggregation=configuration,
+        )
+        for configuration in configurations
+    )
+    if gallery_split is DatasetSplit.TRAIN and query_split is DatasetSplit.VALIDATION:
+        evaluation_role = "validation"
+        selection_allowed = True
+    elif query_split is DatasetSplit.TEST:
+        evaluation_role = "final_test"
+        selection_allowed = False
+    else:
+        evaluation_role = "exploratory"
+        selection_allowed = False
+    return AggregationComparisonReport(
+        gallery_split=gallery_split.value,
+        query_split=query_split.value,
+        exploratory_same_split=gallery_split is query_split,
+        evaluation_role=evaluation_role,
+        selection_allowed=selection_allowed,
+        reports=reports,
+    )
+
+
 def write_retrieval_report(*, path: Path, report: RetrievalReport) -> None:
     """Atomically write a private retrieval report."""
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary_path = path.with_name(f".{path.name}.tmp")
     temporary_path.write_text(
         json.dumps(report.as_dict(), indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    temporary_path.replace(path)
+
+
+def write_aggregation_comparison(
+    *, path: Path, comparison: AggregationComparisonReport
+) -> None:
+    """Atomically write one local aggregation comparison."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary_path = path.with_name(f".{path.name}.tmp")
+    temporary_path.write_text(
+        json.dumps(comparison.as_dict(), indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
     temporary_path.replace(path)

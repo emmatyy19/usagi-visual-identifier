@@ -75,7 +75,8 @@ audit passes.
 - [x] Extract normalized embeddings with DINOv2 Small
 - [x] Build a brute-force cosine-similarity index
 - [x] Support one or many reference images per catalog item
-- [ ] Compare nearest image, prototype, top k mean, and weighted neighbor rules
+- [x] Implement nearest image, prototype, top k mean, and weighted neighbor rules
+- [ ] Compare the four rules on Session 2 and choose one with validation results
 - [x] Return top-k matches with distances and reference provenance
 - [x] Evaluate top-1, top-3, per-class recall, and common confusion pairs
 - [ ] Measure CPU and GPU inference latency
