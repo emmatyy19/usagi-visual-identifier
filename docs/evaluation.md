@@ -34,6 +34,11 @@ Report at least:
 If retrieval ranks individual reference images, convert them to an identity
 ranking before calculating identity metrics. Document the aggregation rule.
 
+Nearest image, prototype, and top k mean produce cosine based scores. Weighted
+neighbor voting produces vote mass between zero and one. Scores from different
+aggregation families are not interchangeable confidence values and must not
+reuse an unknown rejection threshold without validation.
+
 ## Classification metrics
 
 For linear-probe and fine-tuned classifiers, report:

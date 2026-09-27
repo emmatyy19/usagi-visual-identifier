@@ -106,6 +106,8 @@ changing the model.
 9. The [embedding walkthrough](notebooks/embedding_baseline_walkthrough.ipynb)
    provides an executed visual showcase of the baseline results and all 98
    Session 1 photographs.
+10. The [aggregation comparison](docs/baselines/aggregation-comparison.md)
+    explains the four frozen retrieval rules and how to compare them fairly.
 
 ## Current status
 

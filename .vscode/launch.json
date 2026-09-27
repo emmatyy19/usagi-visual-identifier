@@ -2,6 +2,22 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Compare Retrieval Aggregations",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/compare_aggregations.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "justMyCode": false,
+      "env": {
+        "USAGI_GALLERY_SPLIT": "train",
+        "USAGI_QUERY_SPLIT": "train",
+        "USAGI_TOP_K_MEAN": "3",
+        "USAGI_WEIGHTED_NEIGHBORS": "5",
+        "USAGI_VOTE_TEMPERATURE": "0.07"
+      }
+    },
+    {
       "name": "Build DINOv2 Embedding Baseline",
       "type": "debugpy",
       "request": "launch",
