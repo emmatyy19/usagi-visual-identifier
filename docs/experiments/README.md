@@ -8,9 +8,10 @@ reviewed photographs that I explicitly approved for publication.
 Name records sequentially:
 
 ```text
-001-frozen-dinov2-retrieval.md
-002-linear-probe.md
-003-partial-fine-tuning.md
+001-frozen-dinov2-session-001.md
+002-frozen-dinov2-session-002-validation.md
+003-linear-probe.md
+004-partial-fine-tuning.md
 ```
 
 Copy [`template.md`](template.md) when beginning an experiment. Complete the
