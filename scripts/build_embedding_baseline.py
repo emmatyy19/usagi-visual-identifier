@@ -12,6 +12,7 @@ from usagi_visual_identifier.embeddings import (
     evaluate_retrieval,
     load_embedding_artifact,
     load_prepared_examples,
+    select_embedding_examples,
     write_retrieval_report,
 )
 
@@ -21,14 +22,36 @@ PROCESSED_ROOT = PROJECT_ROOT / "data" / "processed"
 ARTIFACT_ROOT = PROJECT_ROOT / "artifacts"
 
 
+def _embedding_splits() -> frozenset[DatasetSplit]:
+    """Read the explicitly selected artifact splits from the environment."""
+    raw = os.environ.get("USAGI_EMBEDDING_SPLITS", "train,validation")
+    values = [value.strip() for value in raw.split(",") if value.strip()]
+    try:
+        return frozenset(DatasetSplit(value) for value in values)
+    except ValueError as error:
+        allowed = ", ".join(split.value for split in DatasetSplit)
+        raise ValueError(f"USAGI_EMBEDDING_SPLITS must use: {allowed}") from error
+
+
+def _allows_final_test() -> bool:
+    """Require a deliberate exact value before embedding the sealed test set."""
+    return os.environ.get("USAGI_ALLOW_FINAL_TEST", "false").casefold() == "true"
+
+
 def main() -> None:
     """Build the pinned baseline and save its private evaluation report."""
     requested_device = os.environ.get("USAGI_DEVICE", "auto")
     batch_size = int(os.environ.get("USAGI_BATCH_SIZE", "8"))
 
-    examples, fingerprint = load_prepared_examples(
+    all_examples, fingerprint = load_prepared_examples(
         private_root=PRIVATE_ROOT,
         processed_root=PROCESSED_ROOT,
+    )
+    included_splits = _embedding_splits()
+    examples = select_embedding_examples(
+        examples=all_examples,
+        included_splits=included_splits,
+        allow_test=_allows_final_test(),
     )
     encoder = Dinov2Encoder(
         model_id=DEFAULT_DINOV2_MODEL_ID,
@@ -60,6 +83,10 @@ def main() -> None:
     write_retrieval_report(path=report_path, report=report)
 
     print(f"Device: {result.device_name}")
+    print(
+        "Included splits: "
+        + ", ".join(sorted(split.value for split in included_splits))
+    )
     print(f"Images: {result.image_count}")
     print(f"Embedding dimension: {result.embedding_dimension}")
     print(f"Embedding time: {result.elapsed_seconds:.2f} seconds")

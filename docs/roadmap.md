@@ -11,8 +11,9 @@ training photographs, 42 prepared Session 2 validation photographs, and a
 reproducible frozen DINOv2 retrieval baseline. All four aggregation rules
 correctly classified every Session 2 query, so nearest image remains the
 preferred rule because it is the simplest tied method and preserves direct
-reference provenance. The current priority is capturing Session 3 under a new
-setup and sealing it before any further model choices.
+reference provenance. Session 3 now contains 42 sealed test photographs. The
+current priority is finishing validation driven model and threshold choices
+without opening that final test set.
 
 The modeling order is frozen retrieval, simple aggregation comparisons, a
 linear probe, partial tuning of the final transformer block, and then retrieval
@@ -58,10 +59,10 @@ prove that no capture session or source image crosses dataset splits.
 ## Phase 2: Collect the first dataset
 
 - [x] Assign stable IDs to 5-10 owned variants
-- [ ] Conduct at least three distinct capture sessions per variant
-- [ ] Vary pose, distance, background, and lighting according to the protocol
+- [x] Conduct at least three distinct capture sessions per variant
+- [x] Vary pose, distance, background, and lighting according to the protocol
 - [x] Record image provenance and capture-session metadata
-- [ ] Reserve one complete session per variant as the untouched test set
+- [x] Reserve one complete session per variant as the untouched test set
 - [ ] Collect non-Usagi plushes and excluded Usagi variants as unknown examples
 - [x] Audit Session 1 duplicates, corrupted images, labels, and personal data
 - [x] Publish a reviewed Session 1 summary without the original HEIC files
@@ -82,7 +83,8 @@ audit passes.
 - [x] Compare the four rules on Session 2 and choose one with validation results
 - [x] Return top-k matches with distances and reference provenance
 - [x] Evaluate top-1, top-3, per-class recall, and common confusion pairs
-- [ ] Measure CPU and GPU inference latency
+- [x] Measure Apple Metal inference latency
+- [ ] Measure CPU and NVIDIA GPU inference latency
 - [x] Record the Session 1 sanity check as Experiment 001
 - [x] Record the Session 2 validation comparison as Experiment 002
 

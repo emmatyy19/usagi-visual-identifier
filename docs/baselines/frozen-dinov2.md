@@ -23,6 +23,12 @@ The launch uses automatic device selection:
 The default batch size is eight. It is intentionally conservative for both the
 Mac and the RTX 3060.
 
+The default artifact includes the training and validation splits only. The
+debugger explicitly sets `USAGI_ALLOW_FINAL_TEST` to `false`, so rerunning the
+builder cannot encode Session 3 by accident. The final evaluation will require
+changing both the included splits and this deliberate override after every
+model and threshold choice is frozen.
+
 ## What the script saves
 
 The script writes the following ignored local artifacts:

@@ -169,6 +169,28 @@ def load_prepared_examples(
     return tuple(examples), fingerprint
 
 
+def select_embedding_examples(
+    *,
+    examples: Sequence[EmbeddingExample],
+    included_splits: frozenset[DatasetSplit],
+    allow_test: bool = False,
+) -> tuple[EmbeddingExample, ...]:
+    """Select explicit splits while protecting a sealed test set by default."""
+    if not included_splits:
+        raise EmbeddingError("at least one embedding split must be selected")
+    if DatasetSplit.TEST in included_splits and not allow_test:
+        raise EmbeddingError(
+            "test embeddings are sealed; set the explicit final evaluation override"
+        )
+    selected = tuple(
+        example for example in examples if example.split in included_splits
+    )
+    if not selected:
+        names = ", ".join(sorted(split.value for split in included_splits))
+        raise EmbeddingError(f"selected embedding splits have no images: {names}")
+    return selected
+
+
 def _load_rgb_image(path: Path) -> Image.Image:
     """Load one prepared image and detach it from the file handle."""
     try:

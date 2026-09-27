@@ -2,6 +2,36 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Predict One Image",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/predict_image.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "justMyCode": false,
+      "env": {
+        "USAGI_QUERY_IMAGE": "${input:queryImage}",
+        "USAGI_DEVICE": "auto",
+        "USAGI_LATENCY_WARMUP": "0",
+        "USAGI_LATENCY_RUNS": "0"
+      }
+    },
+    {
+      "name": "Benchmark One Image",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/predict_image.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "justMyCode": false,
+      "env": {
+        "USAGI_QUERY_IMAGE": "${input:queryImage}",
+        "USAGI_DEVICE": "auto",
+        "USAGI_LATENCY_WARMUP": "3",
+        "USAGI_LATENCY_RUNS": "20"
+      }
+    },
+    {
       "name": "Compare Retrieval Aggregations",
       "type": "debugpy",
       "request": "launch",
@@ -27,7 +57,9 @@
       "justMyCode": false,
       "env": {
         "USAGI_DEVICE": "auto",
-        "USAGI_BATCH_SIZE": "8"
+        "USAGI_BATCH_SIZE": "8",
+        "USAGI_EMBEDDING_SPLITS": "train,validation",
+        "USAGI_ALLOW_FINAL_TEST": "false"
       }
     },
     {
@@ -68,6 +100,13 @@
         "USAGI_SESSION": "session-003",
         "USAGI_SPLIT": "test"
       }
+    }
+  ],
+  "inputs": [
+    {
+      "id": "queryImage",
+      "type": "promptString",
+      "description": "Absolute path to one doll photo"
     }
   ]
 }

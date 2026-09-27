@@ -2,6 +2,7 @@
 
 import json
 from collections.abc import Sequence
+from dataclasses import replace
 from pathlib import Path
 from typing import Protocol
 
@@ -10,11 +11,13 @@ import pytest
 from numpy.typing import NDArray
 from PIL import Image
 
+from usagi_visual_identifier.data.models import DatasetSplit
 from usagi_visual_identifier.embeddings.artifacts import (
     EmbeddingError,
     build_embedding_artifact,
     load_embedding_artifact,
     load_prepared_examples,
+    select_embedding_examples,
 )
 
 
@@ -127,6 +130,42 @@ def test_prepared_examples_require_complete_matching_manifests(
             private_root=prepared_fixture.private_root,
             processed_root=prepared_fixture.processed_root,
         )
+
+
+def test_embedding_split_selection_keeps_test_sealed(
+    prepared_fixture: PreparedFixture,
+) -> None:
+    """Test examples require an explicit final evaluation override."""
+    examples, _ = load_prepared_examples(
+        private_root=prepared_fixture.private_root,
+        processed_root=prepared_fixture.processed_root,
+    )
+    test_example = replace(
+        examples[0],
+        image_id="img-test",
+        capture_session_id="session-003",
+        split=DatasetSplit.TEST,
+    )
+    all_examples = (*examples, test_example)
+
+    selected = select_embedding_examples(
+        examples=all_examples,
+        included_splits=frozenset({DatasetSplit.TRAIN}),
+    )
+    assert len(selected) == 4
+
+    with pytest.raises(EmbeddingError, match="test embeddings are sealed"):
+        select_embedding_examples(
+            examples=all_examples,
+            included_splits=frozenset({DatasetSplit.TEST}),
+        )
+    assert select_embedding_examples(
+        examples=all_examples,
+        included_splits=frozenset({DatasetSplit.TEST}),
+        allow_test=True,
+    ) == (test_example,)
+    with pytest.raises(EmbeddingError, match="at least one embedding split"):
+        select_embedding_examples(examples=all_examples, included_splits=frozenset())
 
 
 @pytest.mark.parametrize(

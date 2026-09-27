@@ -108,6 +108,8 @@ changing the model.
    Session 1 photographs, and all 42 Session 2 validation photographs.
 10. The [aggregation comparison](docs/baselines/aggregation-comparison.md)
     explains the four frozen retrieval rules and how to compare them fairly.
+11. The [single image inference guide](docs/baselines/single-image-inference.md)
+    explains how to predict one photo and measure local latency in the debugger.
 
 ## Current status
 
@@ -117,12 +119,17 @@ photographs. All four frozen DINOv2 aggregation rules correctly identified all
 42 Session 2 queries. Since the added aggregation complexity did not improve
 the validation metrics, nearest image remains the preferred frozen baseline.
 
-I will capture Session 3 under another setup now and keep it sealed for final
-testing. Before opening it, I will add unknown validation examples, measure
-latency, train a linear classification head while DINOv2 stays frozen, and try
-partial tuning of the final transformer block. Metric learning and patch level
-matching will only be added when the earlier results give a clear reason to try
-them.
+Session 3 has been captured under another setup and is sealed for final testing.
+Before opening it, I will add unknown validation examples, finish device latency
+measurements, train a linear classification head while DINOv2 stays frozen, and
+try partial tuning of the final transformer block. Metric learning and patch
+level matching will only be added when the earlier results give a clear reason
+to try them.
+
+The frozen baseline now also has a debugger workflow for predicting one photo
+and measuring warm inference latency. The first Apple Metal benchmark reached a
+median warm prediction time of about 91 milliseconds against the 98 image
+training gallery.
 
 ## Development setup
 
