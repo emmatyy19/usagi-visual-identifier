@@ -4,6 +4,20 @@ This roadmap tracks public milestone-level progress. Detailed personal notes,
 collection inventory, product-research leads, and near-term working checklists
 belong in the Git-ignored `private/` directory.
 
+## Current position
+
+The repository contains seven catalog identities, 98 prepared Session 1
+photographs, a reproducible data preparation pipeline, and a frozen DINOv2
+retrieval sanity check. The current priority is collecting independent Session
+2 validation photographs and sealed Session 3 test photographs before choosing
+an aggregation rule or training a model.
+
+The modeling order is frozen retrieval, simple aggregation comparisons, a
+linear probe, partial tuning of the final transformer block, and then retrieval
+oriented metric learning. Patch level matching is optional and will only be
+added if the failure analysis shows that global embeddings consistently miss
+small identity details.
+
 ## Phase 0: Define the experiment
 
 - [x] Define the project motivation and initial user workflow
@@ -12,9 +26,9 @@ belong in the Git-ignored `private/` directory.
 - [x] Define a staged transfer-learning and fine-tuning plan
 - [x] Define capture-session-aware dataset splitting
 - [x] Define closed-set and open-set evaluation
-- [ ] Inventory the first 5-10 owned variants using stable local identifiers
-- [ ] Decide which collection fields are public, private, or deferred
-- [ ] Confirm the available RTX 3060 VRAM and local CUDA environment
+- [x] Inventory the first 5-10 owned variants using stable local identifiers
+- [x] Decide which collection fields are public, private, or deferred
+- [x] Confirm the available RTX 3060 VRAM and local CUDA environment
 
 ### Exit criteria
 
@@ -27,12 +41,12 @@ results.
 - [x] Create a Python 3.12 package using `uv` and a `src/` layout
 - [x] Configure Ruff, strict Pyright, pytest, pre-commit, and CI
 - [ ] Define and apply deterministic seeds for model experiments
-- [ ] Define typed catalog-item and image-manifest records
-- [ ] Implement manifest validation with actionable error messages
-- [ ] Create safe synthetic image fixtures for automated tests
-- [ ] Implement deterministic image preprocessing
-- [ ] Add a command that audits class counts, sessions, and split leakage
-- [ ] Document the exact local directory and metadata contracts
+- [x] Define typed catalog-item and image-manifest records
+- [x] Implement manifest validation with actionable error messages
+- [x] Create safe synthetic image fixtures for automated tests
+- [x] Implement deterministic image preprocessing
+- [x] Add a command that audits class counts, sessions, and split leakage
+- [x] Document the exact local directory and metadata contracts
 
 ### Exit criteria
 
@@ -41,14 +55,14 @@ prove that no capture session or source image crosses dataset splits.
 
 ## Phase 2: Collect the first dataset
 
-- [ ] Assign stable IDs to 5-10 owned variants
+- [x] Assign stable IDs to 5-10 owned variants
 - [ ] Conduct at least three distinct capture sessions per variant
 - [ ] Vary pose, distance, background, and lighting according to the protocol
-- [ ] Record image provenance and capture-session metadata
+- [x] Record image provenance and capture-session metadata
 - [ ] Reserve one complete session per variant as the untouched test set
 - [ ] Collect non-Usagi plushes and excluded Usagi variants as unknown examples
-- [ ] Audit duplicates, corrupted images, labels, and accidental personal data
-- [ ] Produce a private dataset summary without publishing raw images
+- [x] Audit Session 1 duplicates, corrupted images, labels, and personal data
+- [x] Publish a reviewed Session 1 summary without the original HEIC files
 
 ### Exit criteria
 
@@ -58,14 +72,14 @@ audit passes.
 
 ## Phase 3: Frozen-embedding retrieval baseline
 
-- [ ] Extract normalized embeddings with DINOv2 Small
-- [ ] Build a brute-force cosine-similarity index
-- [ ] Support one or many reference images per catalog item
-- [ ] Compare nearest-image and per-item prototype aggregation
-- [ ] Return top-k matches with distances and reference provenance
-- [ ] Evaluate top-1, top-3, per-class recall, and common confusion pairs
+- [x] Extract normalized embeddings with DINOv2 Small
+- [x] Build a brute-force cosine-similarity index
+- [x] Support one or many reference images per catalog item
+- [ ] Compare nearest image, prototype, top k mean, and weighted neighbor rules
+- [x] Return top-k matches with distances and reference provenance
+- [x] Evaluate top-1, top-3, per-class recall, and common confusion pairs
 - [ ] Measure CPU and GPU inference latency
-- [ ] Record the baseline as Experiment 001
+- [x] Record the Session 1 sanity check as Experiment 001
 
 ### Exit criteria
 

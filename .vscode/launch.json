@@ -2,6 +2,19 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Build DINOv2 Embedding Baseline",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/build_embedding_baseline.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "justMyCode": false,
+      "env": {
+        "USAGI_DEVICE": "auto",
+        "USAGI_BATCH_SIZE": "8"
+      }
+    },
+    {
       "name": "Prepare Session 1",
       "type": "debugpy",
       "request": "launch",

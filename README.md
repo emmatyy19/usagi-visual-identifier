@@ -101,14 +101,26 @@ changing the model.
    tried, what happened, and what changed afterward.
 7. The [data preparation guide](docs/data/data-preparation.md) explains how I
    turn private phone photos into validated model inputs.
+8. The [frozen DINOv2 baseline](docs/baselines/frozen-dinov2.md) explains the
+   first embedding and retrieval experiment.
+9. The [embedding walkthrough](notebooks/embedding_baseline_walkthrough.ipynb)
+   provides an executed visual showcase of the baseline results and all 98
+   Session 1 photographs.
 
 ## Current status
 
 The planning and repository setup are complete. The first capture session has
-been collected, and the data preparation pipeline can now validate the private
-manifest, convert HEIC originals into model ready JPEG copies, and create visual
-audit sheets. The next work is the pretrained embedding baseline and two more
-independent photo sessions.
+been collected and prepared, and the frozen DINOv2 embedding baseline can run
+locally on Apple Metal, NVIDIA CUDA, or CPU. The Session 1 result is only a
+pipeline sanity check. The next meaningful measurement requires an independent
+Session 2, while Session 3 will remain sealed for final testing.
+
+After those sessions are ready, I will compare nearest image retrieval,
+identity prototypes, top k identity means, and similarity weighted neighbor
+voting without changing the encoder. Then I will train a linear classification
+head while DINOv2 stays frozen. Partial tuning of the final transformer block
+comes after that. Metric learning and patch level matching will only be added
+when the earlier results give a clear reason to try them.
 
 ## Development setup
 
@@ -156,7 +168,22 @@ uv build
 
 ## Privacy and rights
 
-My photos, collection inventory, purchase details, credentials, downloaded
-product images, generated embeddings, and model files stay local and are
-excluded from Git. I will only publish an example image after checking that I
-have the right to share it and that it contains no private information.
+The showcase notebook includes reviewed, resized renderings of the doll photos
+I took for Session 1. I am comfortable sharing those images as part of this
+project, and the prepared copies do not include the original photo metadata.
+
+The original HEIC files, standalone prepared dataset, collection inventory,
+purchase details, credentials, downloaded third party images, generated
+embeddings, and model files stay local and are excluded from Git.
+
+This is an independent educational fan project and is not affiliated with
+Nagano, Chiikawa, or their official rights holders. The photographs are © 2026
+Emma Tong. All rights reserved.
+
+## License
+
+The source code and written documentation are available under the
+[MIT License](LICENSE). The license does not apply to the photographs embedded
+in the showcase notebook. Those photographs remain © 2026 Emma Tong. All
+rights reserved. Chiikawa characters and merchandise belong to their respective
+rights holders.

@@ -65,7 +65,9 @@ Complete after execution.
 ## Slice and failure analysis
 
 Summarize per-identity behavior, recurring confusion pairs, robustness slices,
-and representative qualitative failure modes without exposing private images.
+and representative qualitative failure modes. Only use photographs that I
+explicitly reviewed and approved for publication. Do not expose original files,
+photo metadata, or private paths.
 
 ## Conclusion
 
@@ -76,4 +78,3 @@ candidate. Distinguish observations from speculation.
 
 - [ ] Record any justified next experiment.
 - [ ] Update design documentation if a decision changed.
-

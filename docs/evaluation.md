@@ -111,6 +111,8 @@ Every major experiment should preserve a table like:
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
 | Frozen DINOv2 + nearest image | None | TBD | TBD | TBD | TBD | TBD |
 | Frozen DINOv2 + prototypes | None | TBD | TBD | TBD | TBD | TBD |
+| Frozen DINOv2 + top k mean | None | TBD | TBD | TBD | TBD | TBD |
+| Frozen DINOv2 + weighted neighbors | None | TBD | TBD | TBD | TBD | TBD |
 | Linear probe | Head | TBD | TBD | TBD | TBD | TBD |
 | Partial fine-tune | Head + final block | TBD | TBD | TBD | TBD | TBD |
 | Metric learning | Projection + selected blocks | TBD | TBD | TBD | TBD | TBD |
@@ -141,6 +143,6 @@ For every major experiment, review representative examples of:
 - unknown queries falsely accepted; and
 - errors resolved or introduced relative to the previous baseline.
 
-The public experiment record should describe the visible pattern without
-publishing private source images unless explicitly approved.
-
+The public experiment record should describe the visible pattern. It may use
+reviewed photographs that I explicitly approved for publication, but it must
+not expose original files, photo metadata, or private paths.
