@@ -13,7 +13,7 @@ build/
 .pyright/
 .coverage
 htmlcov/
-.testmondata
+.testmondata*
 
 # Jupyter
 .ipynb_checkpoints/

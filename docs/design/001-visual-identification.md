@@ -2,7 +2,7 @@
 
 ## Status
 
-Proposed
+Active
 
 ## Context
 
@@ -63,7 +63,8 @@ The initial output contains:
 - Inferring an exact commercial product name from visual appearance alone.
 - Estimating authenticity, physical condition, or monetary value.
 - Training a vision foundation model from scratch.
-- Publishing personal photos or downloaded copyrighted product photography.
+- Publishing original phone files, unreviewed personal photos, or downloaded
+  product photography.
 - Providing a public service or mobile application.
 
 ## Proposed architecture
@@ -108,13 +109,20 @@ DINOv2 Small is the planned first encoder. Each gallery and query image is
 converted to an L2-normalized embedding. Exact cosine similarity ranks gallery
 images. This establishes the minimum-complexity baseline.
 
-Two item-level aggregation rules will be compared:
+Four item level aggregation rules will be compared:
 
 1. **Nearest image:** an item's score is its most similar reference image.
 2. **Prototype:** average the normalized reference embeddings for an item, then
    normalize the mean and compare the query to that prototype.
+3. **Top k mean:** average the strongest few reference scores for each item.
+4. **Weighted neighbor vote:** allow several nearby references to vote, with
+   stronger similarities receiving more weight.
 
 The rule is chosen with validation sessions only.
+
+Patch level similarity is not part of the initial comparison. It will be added
+only if independent validation errors show that the global embedding repeatedly
+misses small local identity details.
 
 ### Stage B: Linear probe
 
@@ -145,13 +153,15 @@ than training loss alone.
 
 ## Data boundary
 
-Images and private inventory metadata remain outside version control. A local
-manifest maps image paths to stable catalog IDs, capture sessions, sources, and
-split assignments. See the [dataset protocol](../data/dataset-protocol.md).
+Original images and private inventory metadata remain outside version control.
+A local manifest maps image paths to stable catalog IDs, capture sessions,
+sources, and split assignments. See the
+[dataset protocol](../data/dataset-protocol.md).
 
 Derived embeddings, checkpoints, indexes, and run outputs are also local
-artifacts. Public experiment records contain aggregate metrics and carefully
-reviewed qualitative summaries, not source imagery or private paths.
+artifacts. Public experiment records may contain reviewed, resized photographs
+when I have explicitly approved them. They must not contain original photo
+metadata, private paths, or unreviewed source files.
 
 ## Identity boundary
 
@@ -207,11 +217,11 @@ retrieval timestamp, currency, condition, and listing state.
 
 ## Interfaces
 
-The first interface is a local CLI with separate commands for:
+The first interface uses local debugger scripts and VS Code launch choices for:
 
-- validating an image manifest;
+- validating and preparing an image manifest;
 - extracting or refreshing gallery embeddings;
-- evaluating a saved model/index configuration; and
+- evaluating a saved model and index configuration; and
 - identifying one cropped query image.
 
 A local web UI is deferred until the underlying output contract is stable.
@@ -271,18 +281,18 @@ metadata and commerce observations as separate modules with separate tests.
 - Retrieval precedes classification as the user-facing formulation.
 - DINOv2 Small is the first baseline encoder.
 - Exact cosine search is sufficient for the initial catalog.
+- Cheap aggregation comparisons come before model training.
 - Fine-tuning begins with a linear head, then the final backbone block.
+- Patch level matching requires evidence that global features miss local cues.
 - Capture-session splitting is mandatory.
 - Unknown rejection is a first-class requirement, not a post-launch addition.
 - Multi-object detection and market tracking are later phases.
 
 ## Open decisions
 
-- How many visually distinct owned variants qualify for the first dataset?
 - Is DINOv2 or DINOv3 better under the same local protocol?
-- Should reference aggregation use nearest image, prototypes, or both?
+- Which planned aggregation rule generalizes best to Session 2?
 - Which augmentations preserve tiny identity cues?
 - Which metric-learning objective is most stable at the available class count?
 - What known-acceptance/unknown-false-acceptance tradeoff feels useful in the
   personal workflow?
-
