@@ -47,6 +47,15 @@ artifacts/evaluations/dinov2_small/aggregation_comparison_train_to_train.json
 
 The report is a local generated artifact and is excluded from Git.
 
+## Explore it visually
+
+The aggregation section in the
+[`embedding_baseline_walkthrough.ipynb`](../../notebooks/embedding_baseline_walkthrough.ipynb)
+notebook compares the aggregate metrics, per identity accuracy, prediction
+disagreements, changed errors, reference evidence, weighted votes, and prototype
+construction. The committed notebook already contains the executed Session 1
+outputs.
+
 ## Session 1 implementation check
 
 The first run produced these same session results:
