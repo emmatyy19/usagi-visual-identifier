@@ -11,9 +11,10 @@ training photographs, 42 prepared Session 2 validation photographs, and a
 reproducible frozen DINOv2 retrieval baseline. All four aggregation rules
 correctly classified every Session 2 query, so nearest image remains the
 preferred rule because it is the simplest tied method and preserves direct
-reference provenance. Session 3 now contains 42 sealed test photographs. The
-current priority is finishing validation driven model and threshold choices
-without opening that final test set.
+reference provenance. The linear probe is complete. The partial fine tuning
+pipeline and private GPU transfer workflow are ready, but the RTX 3060 results
+are pending. Session 3 contains 42 sealed test photographs and remains closed
+while validation driven model and threshold choices are completed.
 
 The modeling order is frozen retrieval, simple aggregation comparisons, a
 linear probe, partial tuning of the final transformer block, and then retrieval
@@ -109,10 +110,12 @@ tradeoff between fixed-class prediction and incremental retrieval.
 
 ## Phase 5: Partial fine-tuning
 
-- [ ] Define conservative augmentations that preserve merchandise identity
-- [ ] Unfreeze only the final encoder block before considering deeper tuning
-- [ ] Use mixed precision and VRAM-aware batch sizing
-- [ ] Track train/validation curves and save only local checkpoints
+- [x] Define conservative augmentations that preserve merchandise identity
+- [x] Implement a model that unfreezes only the final encoder block
+- [x] Configure mixed precision and VRAM-aware batch sizing
+- [x] Track train/validation curves and save only local checkpoints
+- [x] Build a verified private transfer workflow for GPU training
+- [ ] Run the predetermined configurations and seeds on the RTX 3060
 - [ ] Compare against the frozen retrieval and linear-probe baselines
 - [ ] Run ablations for augmentation and trainable depth
 - [ ] Inspect attention or nearest-neighbor examples for qualitative evidence

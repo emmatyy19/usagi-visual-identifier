@@ -1,0 +1,25 @@
+{
+  "augmentation": {
+    "brightness": 0.12,
+    "contrast": 0.12,
+    "crop_ratio_maximum": 1.08,
+    "crop_ratio_minimum": 0.92,
+    "crop_scale_minimum": 0.88,
+    "enabled": true,
+    "hue": 0.02,
+    "rotation_degrees": 6.0,
+    "saturation": 0.08
+  },
+  "backbone_learning_rate": 0.00001,
+  "batch_size": 2,
+  "device": "cuda",
+  "epochs": 1,
+  "gradient_clip_norm": 1.0,
+  "head_learning_rate": 0.0005,
+  "minimum_delta": 0.00001,
+  "mixed_precision": true,
+  "patience": 1,
+  "seed": 42,
+  "warm_start_linear_probe": true,
+  "weight_decay": 0.0001
+}
