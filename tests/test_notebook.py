@@ -36,3 +36,34 @@ def test_embedding_walkthrough_is_an_executed_showcase() -> None:
     assert "file:///" not in serialized
     assert "© 2026 Emma Tong. All rights reserved." in serialized
     assert path.stat().st_size < 20_000_000
+
+
+def test_linear_probe_walkthrough_is_an_executed_showcase() -> None:
+    """The linear probe report is executed, portable, and safe to publish."""
+    path = Path(__file__).parents[1] / "notebooks" / "linear_probe_walkthrough.ipynb"
+    raw: object = json.loads(path.read_text(encoding="utf-8"))
+    assert isinstance(raw, dict)
+    notebook = cast(dict[str, object], raw)
+    assert notebook["nbformat"] == 4
+
+    cells = cast(list[dict[str, object]], notebook["cells"])
+    assert len(cells) >= 20
+    output_count = 0
+    image_count = 0
+    for cell in cells:
+        if cell["cell_type"] == "code":
+            assert cell["execution_count"] is not None
+            outputs = cast(list[dict[str, object]], cell["outputs"])
+            output_count += len(outputs)
+            for output in outputs:
+                data = output.get("data")
+                if isinstance(data, dict) and "image/png" in data:
+                    image_count += 1
+
+    serialized = path.read_text(encoding="utf-8")
+    assert output_count > 0
+    assert image_count >= 8
+    assert "/Users/emmatong" not in serialized
+    assert "file:///" not in serialized
+    assert "© 2026 Emma Tong. All rights reserved." in serialized
+    assert path.stat().st_size < 20_000_000

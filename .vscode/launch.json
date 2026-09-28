@@ -2,6 +2,25 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Train Linear Probe",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/train_linear_probe.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "justMyCode": false,
+      "env": {
+        "USAGI_SEED": "42",
+        "USAGI_EPOCHS": "300",
+        "USAGI_BATCH_SIZE": "16",
+        "USAGI_LEARNING_RATE": "0.01",
+        "USAGI_WEIGHT_DECAY": "0.0001",
+        "USAGI_PATIENCE": "40",
+        "USAGI_MINIMUM_DELTA": "0.00001",
+        "USAGI_DEVICE": "cpu"
+      }
+    },
+    {
       "name": "Predict One Image",
       "type": "debugpy",
       "request": "launch",
