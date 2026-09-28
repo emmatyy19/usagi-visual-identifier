@@ -89,8 +89,6 @@ class AugmentationConfig:
             raise PartialFinetuneError("crop ratio minimum must be from 0.8 to 1.0")
         if not 1.0 <= self.crop_ratio_maximum <= 1.25:
             raise PartialFinetuneError("crop ratio maximum must be from 1.0 to 1.25")
-        if self.crop_ratio_minimum > self.crop_ratio_maximum:
-            raise PartialFinetuneError("crop ratio bounds are reversed")
         if not 0 <= self.rotation_degrees <= 10:
             raise PartialFinetuneError("rotation must be from 0 to 10 degrees")
         for name, value, maximum in (
