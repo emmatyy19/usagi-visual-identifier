@@ -110,6 +110,11 @@ changing the model.
     explains the four frozen retrieval rules and how to compare them fairly.
 11. The [single image inference guide](docs/baselines/single-image-inference.md)
     explains how to predict one photo and measure local latency in the debugger.
+12. The [linear probe guide](docs/training/linear-probe.md) explains the first
+    supervised training workflow and its reproducible artifacts.
+13. The [linear probe walkthrough](notebooks/linear_probe_walkthrough.ipynb)
+    explains the reusable training process, logits, softmax, cross entropy,
+    learning curves, validation results, confidence, and learned weights.
 
 ## Current status
 
@@ -130,6 +135,11 @@ The frozen baseline now also has a debugger workflow for predicting one photo
 and measuring warm inference latency. The first Apple Metal benchmark reached a
 median warm prediction time of about 91 milliseconds against the 98 image
 training gallery.
+
+The first supervised linear probe is also complete. It trains only a 2,695
+parameter classification head over frozen embeddings and keeps Session 3
+sealed. It matched nearest image retrieval with perfect Session 2 validation
+accuracy, so nearest image remains the preferred product baseline.
 
 ## Development setup
 

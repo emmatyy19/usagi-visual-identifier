@@ -43,7 +43,7 @@ results.
 
 - [x] Create a Python 3.12 package using `uv` and a `src/` layout
 - [x] Configure Ruff, strict Pyright, pytest, pre-commit, and CI
-- [ ] Define and apply deterministic seeds for model experiments
+- [x] Define and apply deterministic seeds for model experiments
 - [x] Define typed catalog-item and image-manifest records
 - [x] Implement manifest validation with actionable error messages
 - [x] Create safe synthetic image fixtures for automated tests
@@ -95,12 +95,12 @@ baseline on untouched capture sessions.
 
 ## Phase 4: Linear-probe baseline
 
-- [ ] Freeze the visual backbone and train a linear classification head
-- [ ] Tune only on the training and validation sessions
-- [ ] Compare classification accuracy with nearest-neighbor retrieval
-- [ ] Inspect calibration and confidence failure cases
-- [ ] Document how adding a catalog identity differs between both approaches
-- [ ] Record the comparison as Experiment 003
+- [x] Freeze the visual backbone and train a linear classification head
+- [x] Tune only on the training and validation sessions
+- [x] Compare classification accuracy with nearest-neighbor retrieval
+- [x] Inspect calibration and confidence failure cases
+- [x] Document how adding a catalog identity differs between both approaches
+- [x] Record the comparison as Experiment 003
 
 ### Exit criteria
 
