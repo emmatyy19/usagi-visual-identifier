@@ -115,6 +115,9 @@ changing the model.
 13. The [linear probe walkthrough](notebooks/linear_probe_walkthrough.ipynb)
     explains the reusable training process, logits, softmax, cross entropy,
     learning curves, validation results, confidence, and learned weights.
+14. The [partial fine tuning guide](docs/training/partial-finetuning.md) explains
+    the protected data transfer, GPU readiness check, training matrix, saved
+    model delta, and result transfer workflow.
 
 ## Current status
 
@@ -126,10 +129,9 @@ the validation metrics, nearest image remains the preferred frozen baseline.
 
 Session 3 has been captured under another setup and is sealed for final testing.
 Before opening it, I will add unknown validation examples, finish device latency
-measurements, train a linear classification head while DINOv2 stays frozen, and
-try partial tuning of the final transformer block. Metric learning and patch
-level matching will only be added when the earlier results give a clear reason
-to try them.
+measurements, run partial tuning of the final transformer block, and freeze the
+model and rejection threshold. Metric learning and patch level matching will
+only be added when the earlier results give a clear reason to try them.
 
 The frozen baseline now also has a debugger workflow for predicting one photo
 and measuring warm inference latency. The first Apple Metal benchmark reached a
@@ -140,6 +142,12 @@ The first supervised linear probe is also complete. It trains only a 2,695
 parameter classification head over frozen embeddings and keeps Session 3
 sealed. It matched nearest image retrieval with perfect Session 2 validation
 accuracy, so nearest image remains the preferred product baseline.
+
+The next experiment is ready for the RTX 3060. It trains only the final DINOv2
+block, final layer normalization, and classification head. A verified private
+bundle moves Session 1 and Session 2 to the GPU computer without including any
+Session 3 photograph. The results return as a hash checked artifact bundle for
+the Experiment 004 notebook.
 
 ## Development setup
 

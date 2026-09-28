@@ -2,6 +2,47 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Check Fine Tuning Readiness",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/check_finetune_readiness.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "justMyCode": false,
+      "args": [
+        "--config",
+        "configs/partial_finetune/conservative.json"
+      ]
+    },
+    {
+      "name": "Smoke Test Partial Fine Tuning",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/train_partial_finetune.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "justMyCode": false,
+      "args": [
+        "--config",
+        "configs/partial_finetune/smoke.json",
+        "--artifact-root",
+        "artifacts/smoke"
+      ]
+    },
+    {
+      "name": "Train Partial Fine Tuning",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/train_partial_finetune.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "justMyCode": false,
+      "args": [
+        "--config",
+        "configs/partial_finetune/conservative.json"
+      ]
+    },
+    {
       "name": "Train Linear Probe",
       "type": "debugpy",
       "request": "launch",
