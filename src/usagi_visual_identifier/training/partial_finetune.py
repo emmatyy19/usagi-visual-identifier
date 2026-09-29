@@ -607,6 +607,30 @@ def _load_trainable_state(
     model.load_state_dict(current, strict=True)
 
 
+def _complete_optimizer_step(
+    *,
+    model: nn.Module,
+    optimizer: torch.optim.Optimizer,
+    scaler: torch.amp.GradScaler,
+    gradient_clip_norm: float,
+) -> float | None:
+    """Apply one optimizer step and report an AMP overflow as a skipped step."""
+    scaler.unscale_(optimizer)
+    norm = torch.nn.utils.clip_grad_norm_(model.parameters(), gradient_clip_norm)
+    norm_value = float(norm.detach().cpu().item())
+    if not scaler.is_enabled() and not math.isfinite(norm_value):
+        raise PartialFinetuneError("training produced a nonfinite gradient norm")
+    scale_before = scaler.get_scale()
+    scaler.step(optimizer)
+    scaler.update()
+    scale_decreased = scaler.is_enabled() and scaler.get_scale() < scale_before
+    if scale_decreased:
+        return None
+    if not math.isfinite(norm_value):
+        raise PartialFinetuneError("training produced a nonfinite gradient norm")
+    return norm_value
+
+
 def _sha256(path: Path) -> str:
     """Hash one artifact without loading it all into memory."""
     digest = hashlib.sha256()
@@ -786,6 +810,7 @@ def train_partial_finetune(
     selected_epoch = 0
     epochs_without_improvement = 0
     training_started = time.perf_counter()
+    total_skipped_optimizer_steps = 0
     for epoch in range(1, config.epochs + 1):
         model.train()
         order_tensor = torch.randperm(len(data.train_examples), generator=generator)
@@ -794,6 +819,7 @@ def train_partial_finetune(
             for position in range(order_tensor.numel())
         ]
         gradient_norms: list[float] = []
+        skipped_optimizer_steps = 0
         for batch in _batches(
             examples=data.train_examples,
             batch_size=config.batch_size,
@@ -814,13 +840,21 @@ def train_partial_finetune(
                 loss = criterion(model(pixels), targets)
             scaled_loss = cast(torch.Tensor, scaler.scale(loss))
             scaled_loss.backward()  # pyright: ignore[reportUnknownMemberType]
-            scaler.unscale_(optimizer)
-            norm = torch.nn.utils.clip_grad_norm_(
-                model.parameters(), config.gradient_clip_norm
+            gradient_norm = _complete_optimizer_step(
+                model=model,
+                optimizer=optimizer,
+                scaler=scaler,
+                gradient_clip_norm=config.gradient_clip_norm,
             )
-            gradient_norms.append(float(norm.detach().cpu().item()))
-            scaler.step(optimizer)
-            scaler.update()
+            if gradient_norm is None:
+                skipped_optimizer_steps += 1
+            else:
+                gradient_norms.append(gradient_norm)
+        if not gradient_norms:
+            raise PartialFinetuneError(
+                "AMP skipped every optimizer step because gradients stayed nonfinite"
+            )
+        total_skipped_optimizer_steps += skipped_optimizer_steps
         scheduler.step()
 
         train_loss, train_metrics, _, _ = _evaluate(
@@ -843,8 +877,6 @@ def train_partial_finetune(
         )
         if not math.isfinite(train_loss) or not math.isfinite(validation_loss):
             raise PartialFinetuneError("training produced a nonfinite loss")
-        if not all(math.isfinite(value) for value in gradient_norms):
-            raise PartialFinetuneError("training produced a nonfinite gradient norm")
         history.append(
             {
                 "epoch": epoch,
@@ -853,6 +885,7 @@ def train_partial_finetune(
                 "backbone_learning_rate": optimizer.param_groups[0]["lr"],
                 "head_learning_rate": optimizer.param_groups[1]["lr"],
                 "maximum_gradient_norm": max(gradient_norms),
+                "amp_skipped_optimizer_steps": skipped_optimizer_steps,
                 **{f"train_{key}": value for key, value in train_metrics.items()},
                 **{
                     f"validation_{key}": value
@@ -863,7 +896,8 @@ def train_partial_finetune(
         print(
             f"Epoch {epoch:03d} | train loss {train_loss:.4f} | "
             f"validation loss {validation_loss:.4f} | "
-            f"validation Top 1 {validation_metrics['top1_accuracy']:.3f}",
+            f"validation Top 1 {validation_metrics['top1_accuracy']:.3f} | "
+            f"AMP skipped steps {skipped_optimizer_steps}",
             flush=True,
         )
         if validation_loss < best_validation_loss - config.minimum_delta:
@@ -951,6 +985,7 @@ def train_partial_finetune(
         "optimizer": "adamw",
         "scheduler": "cosine_annealing",
         "mixed_precision_used": amp_enabled,
+        "amp_skipped_optimizer_steps": total_skipped_optimizer_steps,
         "deterministic_algorithms": True,
         "training_seconds": training_seconds,
         "completed_epochs": len(history),

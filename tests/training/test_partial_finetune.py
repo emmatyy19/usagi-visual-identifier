@@ -482,6 +482,57 @@ def test_training_requires_paired_components_and_warm_start(tmp_path: Path) -> N
         )
 
 
+def test_amp_overflow_skips_update_and_recovers_on_next_step() -> None:
+    """A temporary scaled gradient overflow is not a fatal training error."""
+    model = nn.Linear(1, 1, bias=False)
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.1)
+    scaler = torch.amp.GradScaler("cpu", init_scale=2.0, growth_interval=100)
+    original_weight = model.weight.detach().clone()
+
+    overflowing_loss = model(torch.ones((1, 1))).sum() * torch.tensor(float("inf"))
+    scaler.scale(overflowing_loss).backward()  # pyright: ignore[reportUnknownMemberType]
+    skipped_norm = partial_finetune_module._complete_optimizer_step(  # pyright: ignore[reportPrivateUsage]
+        model=model,
+        optimizer=optimizer,
+        scaler=scaler,
+        gradient_clip_norm=1.0,
+    )
+
+    assert skipped_norm is None
+    assert torch.equal(model.weight, original_weight)
+    assert scaler.get_scale() == 1.0
+
+    optimizer.zero_grad(set_to_none=True)
+    finite_loss = model(torch.ones((1, 1))).sum()
+    scaler.scale(finite_loss).backward()  # pyright: ignore[reportUnknownMemberType]
+    finite_norm = partial_finetune_module._complete_optimizer_step(  # pyright: ignore[reportPrivateUsage]
+        model=model,
+        optimizer=optimizer,
+        scaler=scaler,
+        gradient_clip_norm=1.0,
+    )
+
+    assert finite_norm == pytest.approx(1.0)
+    assert not torch.equal(model.weight, original_weight)
+
+
+def test_nonfinite_full_precision_gradient_remains_fatal() -> None:
+    """The recovery path applies only when an active scaler skips the update."""
+    model = nn.Linear(1, 1, bias=False)
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.1)
+    scaler = torch.amp.GradScaler("cpu", enabled=False)
+    loss = model(torch.ones((1, 1))).sum() * torch.tensor(float("inf"))
+    scaler.scale(loss).backward()  # pyright: ignore[reportUnknownMemberType]
+
+    with pytest.raises(PartialFinetuneError, match="nonfinite gradient norm"):
+        partial_finetune_module._complete_optimizer_step(  # pyright: ignore[reportPrivateUsage]
+            model=model,
+            optimizer=optimizer,
+            scaler=scaler,
+            gradient_clip_norm=1.0,
+        )
+
+
 def test_load_rejects_corrupt_metadata_and_checkpoint(tmp_path: Path) -> None:
     """Published inference artifacts are verified before model construction."""
     checkpoint = tmp_path / "delta.safetensors"

@@ -43,6 +43,12 @@ only the trained delta.
 
 Pending the RTX 3060 runs.
 
+The first CUDA smoke attempt exposed an overly strict safety check. PyTorch AMP
+correctly skipped a batch with overflowing FP16 gradients and reduced its
+dynamic scale, but the training loop treated that recovered overflow as fatal.
+The corrected loop records skipped steps and continues after a valid update. It
+still fails if an entire epoch produces no valid optimizer step.
+
 ## Decision
 
 Pending comparison across all six runs. Session 3 will not be opened as part
