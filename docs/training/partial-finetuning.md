@@ -239,10 +239,14 @@ uv run python scripts/import_transfer_bundle.py \
   ~/Downloads/partial-finetune-experiment.zip
 ```
 
-The imported runs appear under `artifacts/models/partial_finetune`. They are
-ready for the Experiment 004 comparison notebook. The notebook will compare
-all seeds with frozen retrieval and the linear probe before any Session 3
-evaluation.
+The imported runs appear under `artifacts/models/partial_finetune`. The
+[Experiment 004 walkthrough](../../notebooks/partial_finetune_walkthrough.ipynb)
+compares all seeds with frozen retrieval and the linear probe before any
+Session 3 evaluation.
+
+Training commands use `tqdm` to show progress by epoch and, for image fine
+tuning, by batch. The completed epoch line remains in the terminal output with
+training loss, validation loss, top 1 accuracy, and AMP skipped steps.
 
 ## What success means
 

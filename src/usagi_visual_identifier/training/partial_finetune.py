@@ -22,6 +22,7 @@ from torchvision.transforms import (  # pyright: ignore[reportMissingTypeStubs]
     InterpolationMode,
     v2,
 )
+from tqdm.auto import tqdm
 
 from usagi_visual_identifier.data.models import DatasetSplit
 from usagi_visual_identifier.embeddings import (
@@ -811,7 +812,14 @@ def train_partial_finetune(
     epochs_without_improvement = 0
     training_started = time.perf_counter()
     total_skipped_optimizer_steps = 0
-    for epoch in range(1, config.epochs + 1):
+    epoch_progress = tqdm(
+        range(1, config.epochs + 1),
+        desc="Partial fine tuning",
+        unit="epoch",
+        dynamic_ncols=True,
+        disable=None,
+    )
+    for epoch in epoch_progress:
         model.train()
         order_tensor = torch.randperm(len(data.train_examples), generator=generator)
         order = [
@@ -820,11 +828,20 @@ def train_partial_finetune(
         ]
         gradient_norms: list[float] = []
         skipped_optimizer_steps = 0
-        for batch in _batches(
+        batches = _batches(
             examples=data.train_examples,
             batch_size=config.batch_size,
             order=order,
-        ):
+        )
+        batch_progress = tqdm(
+            batches,
+            desc=f"Epoch {epoch:03d}",
+            unit="batch",
+            leave=False,
+            dynamic_ncols=True,
+            disable=None,
+        )
+        for batch in batch_progress:
             pixels = _pixel_values(
                 processor=processor,
                 examples=batch,
@@ -893,12 +910,19 @@ def train_partial_finetune(
                 },
             }
         )
-        print(
+        epoch_progress.set_postfix(  # pyright: ignore[reportUnknownMemberType]
+            {
+                "train_loss": f"{train_loss:.4f}",
+                "validation_loss": f"{validation_loss:.4f}",
+                "validation_top1": f"{validation_metrics['top1_accuracy']:.3f}",
+                "amp_skips": skipped_optimizer_steps,
+            }
+        )
+        epoch_progress.write(
             f"Epoch {epoch:03d} | train loss {train_loss:.4f} | "
             f"validation loss {validation_loss:.4f} | "
             f"validation Top 1 {validation_metrics['top1_accuracy']:.3f} | "
             f"AMP skipped steps {skipped_optimizer_steps}",
-            flush=True,
         )
         if validation_loss < best_validation_loss - config.minimum_delta:
             best_validation_loss = validation_loss
