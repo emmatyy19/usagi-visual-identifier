@@ -16,6 +16,7 @@ import torch
 from numpy.typing import NDArray
 from torch import nn
 from torch.utils.data import DataLoader, TensorDataset
+from tqdm.auto import tqdm
 
 from usagi_visual_identifier.embeddings.artifacts import EmbeddingArtifact
 
@@ -389,7 +390,14 @@ def train_linear_probe(
     selected_epoch = 0
     epochs_without_improvement = 0
     training_started = time.perf_counter()
-    for epoch in range(1, config.epochs + 1):
+    epoch_progress = tqdm(
+        range(1, config.epochs + 1),
+        desc="Linear probe",
+        unit="epoch",
+        dynamic_ncols=True,
+        disable=None,
+    )
+    for epoch in epoch_progress:
         model.train()
         for batch_features, batch_targets in loader:
             optimizer.zero_grad(set_to_none=True)
@@ -422,6 +430,13 @@ def train_linear_probe(
                     f"validation_{key}": value
                     for key, value in validation_metrics.items()
                 },
+            }
+        )
+        epoch_progress.set_postfix(  # pyright: ignore[reportUnknownMemberType]
+            {
+                "train_loss": f"{train_loss:.4f}",
+                "validation_loss": f"{validation_loss:.4f}",
+                "validation_top1": f"{validation_metrics['top1_accuracy']:.3f}",
             }
         )
         if validation_loss < best_validation_loss - config.minimum_delta:

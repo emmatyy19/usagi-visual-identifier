@@ -11,10 +11,11 @@ training photographs, 42 prepared Session 2 validation photographs, and a
 reproducible frozen DINOv2 retrieval baseline. All four aggregation rules
 correctly classified every Session 2 query, so nearest image remains the
 preferred rule because it is the simplest tied method and preserves direct
-reference provenance. The linear probe is complete. The partial fine tuning
-pipeline and private GPU transfer workflow are ready, but the RTX 3060 results
-are pending. Session 3 contains 42 sealed test photographs and remains closed
-while validation driven model and threshold choices are completed.
+reference provenance. The linear probe and six partial fine tuning runs are
+complete. Conservative augmentation lowered mean Session 2 validation loss by
+about 44 percent and improved the hardest Lobster view for all three seeds.
+Session 3 contains 42 sealed test photographs and remains closed while the
+exact checkpoint and threshold choices are completed.
 
 The modeling order is frozen retrieval, simple aggregation comparisons, a
 linear probe, partial tuning of the final transformer block, and then retrieval
@@ -115,11 +116,11 @@ tradeoff between fixed-class prediction and incremental retrieval.
 - [x] Configure mixed precision and VRAM-aware batch sizing
 - [x] Track train/validation curves and save only local checkpoints
 - [x] Build a verified private transfer workflow for GPU training
-- [ ] Run the predetermined configurations and seeds on the RTX 3060
-- [ ] Compare against the frozen retrieval and linear-probe baselines
+- [x] Run the predetermined configurations and seeds on the RTX 3060
+- [x] Compare against the frozen retrieval and linear-probe baselines
 - [ ] Run ablations for augmentation and trainable depth
-- [ ] Inspect attention or nearest-neighbor examples for qualitative evidence
-- [ ] Record the results as Experiment 004
+- [x] Inspect the least decisive images for qualitative evidence
+- [x] Record the results as Experiment 004
 
 ### Exit criteria
 

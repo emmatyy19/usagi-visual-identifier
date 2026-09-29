@@ -2,7 +2,7 @@
 
 ## Status
 
-Training pipeline ready. GPU results pending.
+Complete on the RTX 3060. Session 3 remains sealed.
 
 ## Question
 
@@ -41,7 +41,30 @@ only the trained delta.
 
 ## Results
 
-Pending the RTX 3060 runs.
+All six runs reached perfect Session 2 top 1 accuracy, top 3 accuracy, and macro
+recall. Accuracy therefore remains at the same ceiling as frozen nearest image
+retrieval and the linear probe.
+
+| Augmentation | Seed | Selected epoch | Validation loss | AMP skips |
+| --- | ---: | ---: | ---: | ---: |
+| None | 42 | 26 | 0.006019 | 0 |
+| None | 123 | 3 | 0.006266 | 0 |
+| None | 2026 | 15 | 0.005924 | 0 |
+| Conservative | 42 | 22 | 0.002307 | 1 |
+| Conservative | 123 | 9 | 0.004439 | 0 |
+| Conservative | 2026 | 19 | 0.003471 | 1 |
+
+Mean selected validation loss was `0.006070` without augmentation and
+`0.003406` with conservative augmentation. This is a reduction of about 44
+percent. Conservative augmentation produced the lower loss for every matched
+seed.
+
+The most difficult validation photograph remained `img-000138`, a side view of
+Lobster claws. Its mean first versus second probability margin increased from
+`0.709` without augmentation to `0.862` with augmentation. The margin improved
+for all three seeds. The
+[executed walkthrough](../../notebooks/partial_finetune_walkthrough.ipynb)
+contains the complete curves, tables, and qualitative review.
 
 The first CUDA smoke attempt exposed an overly strict safety check. PyTorch AMP
 correctly skipped a batch with overflowing FP16 gradients and reduced its
@@ -51,5 +74,9 @@ still fails if an entire epoch produces no valid optimizer step.
 
 ## Decision
 
-Pending comparison across all six runs. Session 3 will not be opened as part
-of this experiment.
+Use conservative augmentation for the partial fine tuning candidate. The result
+is stable across the three planned seeds and improves the known difficult view.
+This does not yet prove that partial fine tuning is the preferred production
+model because the validation set contains only 42 photographs. Freeze one
+checkpoint selection rule before comparing frozen retrieval, the linear probe,
+and partial fine tuning on Session 3.

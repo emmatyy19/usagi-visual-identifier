@@ -118,6 +118,10 @@ changing the model.
 14. The [partial fine tuning guide](docs/training/partial-finetuning.md) explains
     the protected data transfer, GPU readiness check, training matrix, saved
     model delta, and result transfer workflow.
+15. The [partial fine tuning walkthrough](notebooks/partial_finetune_walkthrough.ipynb)
+    compares all six RTX 3060 runs, learning curves, paired seed results,
+    confidence margins, difficult views, training cost, and the augmentation
+    decision.
 
 ## Current status
 
@@ -129,9 +133,9 @@ the validation metrics, nearest image remains the preferred frozen baseline.
 
 Session 3 has been captured under another setup and is sealed for final testing.
 Before opening it, I will add unknown validation examples, finish device latency
-measurements, run partial tuning of the final transformer block, and freeze the
-model and rejection threshold. Metric learning and patch level matching will
-only be added when the earlier results give a clear reason to try them.
+measurements, freeze the selected partial tuning checkpoint, and freeze the
+rejection threshold. Metric learning and patch level matching will only be
+added when the earlier results give a clear reason to try them.
 
 The frozen baseline now also has a debugger workflow for predicting one photo
 and measuring warm inference latency. The first Apple Metal benchmark reached a
@@ -143,11 +147,12 @@ parameter classification head over frozen embeddings and keeps Session 3
 sealed. It matched nearest image retrieval with perfect Session 2 validation
 accuracy, so nearest image remains the preferred product baseline.
 
-The next experiment is ready for the RTX 3060. It trains only the final DINOv2
-block, final layer normalization, and classification head. A verified private
-bundle moves Session 1 and Session 2 to the GPU computer without including any
-Session 3 photograph. The results return as a hash checked artifact bundle for
-the Experiment 004 notebook.
+The partial fine tuning experiment is complete on the RTX 3060. All six runs
+reached perfect Session 2 accuracy. Conservative augmentation lowered mean
+validation loss by about 44 percent and improved the most difficult Lobster
+view for every seed. These results select the augmentation policy, but Session
+3 remains sealed until the exact checkpoint and final evaluation protocol are
+frozen.
 
 ## Development setup
 
