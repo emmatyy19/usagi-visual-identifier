@@ -174,6 +174,12 @@ The smoke result is deliberately stored outside the real experiment directory.
 It verifies image loading, model download, forward and backward passes, CUDA
 mixed precision, validation, and checkpoint publication.
 
+Mixed precision may report one or more skipped optimizer steps while its
+dynamic gradient scale settles. PyTorch skips an unsafe update, lowers the
+scale, and tries the next batch. The run fails if every batch is skipped. This
+distinguishes normal scale adjustment from a training run that never produces
+a valid gradient update.
+
 ## Run the predetermined experiment matrix
 
 I use the same three seeds for both configurations. This makes the augmentation
