@@ -185,12 +185,34 @@ until they are deliberately reviewed for public use and metadata removal.
 
 Once the known identities are complete, photograph a small unknown set:
 
-- for validation, use one or two other plush toys or excluded variants;
+- for validation, use at least one unrelated plush and one visually similar
+  character or excluded Usagi variant;
 - for final testing, use different objects not present in validation; and
 - capture 10-15 images per unknown object in the corresponding session setup.
 
 Do not put an unknown object's photographs into both validation and test. The
 model must reject products it did not encounter while selecting the threshold.
+
+Put validation originals in this local structure:
+
+```text
+data/private/images/unknown/
+├── unknown-0001/
+│   └── session-004/
+└── unknown-0002/
+    └── session-004/
+```
+
+The stable unknown ID refers to one physical product. Keep a short private note
+mapping each ID to the object. Do not add unknown products to `catalog.csv`.
+Use the `Prepare Unknown Validation` debugger configuration after the files are
+in place. It creates manifest rows, prepared JPEGs, and one contact sheet per
+unknown identity.
+
+Use normal, identifiable photographs first. Include the same practical changes
+in angle, distance, and lighting used for the known dolls. A separate
+robustness session can later test blur, severe crops, occlusion, and unusually
+dark lighting without mixing those questions into threshold selection.
 
 ## Definition of done
 

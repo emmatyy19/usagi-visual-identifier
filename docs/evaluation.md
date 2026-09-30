@@ -65,9 +65,22 @@ At the selected operating point, report:
 Also plot or tabulate the tradeoff across thresholds. AUROC can summarize score
 separation but must not replace an explicit operating point.
 
-The threshold-selection objective will be frozen after inspecting validation
-behavior. A reasonable first objective is to minimize unknown false accepts
-subject to retaining an agreed fraction of correctly identified known queries.
+The first threshold selection rule is frozen before collecting unknown
+validation photographs. Among thresholds that correctly identify and accept at
+least 95 percent of known validation queries, select the threshold with the
+lowest unknown false acceptance rate. Break ties by retaining more correctly
+identified known queries, then by choosing the higher threshold. If no
+threshold satisfies the 95 percent requirement, report that result instead of
+silently weakening the requirement.
+
+The score is the selected nearest image cosine similarity. This threshold
+cannot be reused for prototype or voting scores because those methods produce
+different score distributions.
+
+Run the selection from the debugger with `Evaluate Unknown Rejection`. The
+script writes the complete threshold curve, selected operating point, per image
+scores, predicted identities, reference evidence, and accept decisions to a
+Git ignored JSON artifact.
 
 ## Catalog-growth evaluation
 

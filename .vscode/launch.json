@@ -92,6 +92,18 @@
       }
     },
     {
+      "name": "Evaluate Unknown Rejection",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/evaluate_unknown_rejection.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "justMyCode": false,
+      "env": {
+        "USAGI_MINIMUM_KNOWN_ACCEPTANCE": "0.95"
+      }
+    },
+    {
       "name": "Compare Retrieval Aggregations",
       "type": "debugpy",
       "request": "launch",
@@ -145,6 +157,19 @@
       "justMyCode": false,
       "env": {
         "USAGI_SESSION": "session-002",
+        "USAGI_SPLIT": "validation"
+      }
+    },
+    {
+      "name": "Prepare Unknown Validation",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/prepare_data.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "justMyCode": false,
+      "env": {
+        "USAGI_SESSION": "session-004",
         "USAGI_SPLIT": "validation"
       }
     },

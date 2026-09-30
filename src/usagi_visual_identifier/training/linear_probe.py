@@ -121,8 +121,14 @@ def prepare_linear_probe_data(*, artifact: EmbeddingArtifact) -> LinearProbeData
     train_indices = [
         index for index, split in enumerate(artifact.splits) if split == "train"
     ]
+    if any(
+        not artifact.identity_ids[index].startswith("usagi-") for index in train_indices
+    ):
+        raise LinearProbeError("unknown identities cannot enter linear probe training")
     validation_indices = [
-        index for index, split in enumerate(artifact.splits) if split == "validation"
+        index
+        for index, split in enumerate(artifact.splits)
+        if split == "validation" and artifact.identity_ids[index].startswith("usagi-")
     ]
     if not train_indices or not validation_indices:
         raise LinearProbeError("both train and validation embeddings are required")

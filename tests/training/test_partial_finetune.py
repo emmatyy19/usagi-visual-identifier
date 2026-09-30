@@ -188,6 +188,17 @@ def test_data_selection_never_opens_the_test_split(tmp_path: Path) -> None:
         for example in selected.validation_examples
     )
 
+    unknown_validation = dataclass_replace(
+        examples[2],
+        image_id="img-000006",
+        identity_id="unknown-0001",
+        capture_session_id="session-004",
+    )
+    selected_with_unknown = prepare_partial_finetune_data(
+        examples=(*examples, unknown_validation)
+    )
+    assert selected_with_unknown.validation_examples == selected.validation_examples
+
 
 def test_tiny_training_publishes_a_loadable_delta(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch

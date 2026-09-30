@@ -20,6 +20,7 @@ from usagi_visual_identifier.data.loaders import (
     load_image_manifest_csv,
 )
 from usagi_visual_identifier.data.models import (
+    UNKNOWN_ID_PATTERN,
     Catalog,
     DatasetSplit,
     ImageManifest,
@@ -105,20 +106,42 @@ def _numeric_suffix(identifier: str) -> int:
 
 def _discover_session_sources(
     *, private_root: Path, session_id: str, catalog: Catalog
-) -> tuple[tuple[str, Path], ...]:
+) -> tuple[tuple[str, bool, Path], ...]:
     """Find supported originals for one session in catalog order."""
     if SESSION_PATTERN.fullmatch(session_id) is None:
         raise PreparationError(f"invalid capture session ID: {session_id}")
 
     images_root = private_root / "images"
     catalog_ids = catalog.by_id()
-    discovered: list[tuple[str, Path]] = []
+    discovered: list[tuple[str, bool, Path]] = []
 
     if not images_root.is_dir():
         raise PreparationError(f"private image directory does not exist: {images_root}")
 
     for identity_directory in sorted(images_root.iterdir()):
         if not identity_directory.is_dir() or identity_directory.name.startswith("_"):
+            continue
+        if identity_directory.name == "unknown":
+            for unknown_directory in sorted(identity_directory.iterdir()):
+                if not unknown_directory.is_dir():
+                    continue
+                if re.fullmatch(UNKNOWN_ID_PATTERN, unknown_directory.name) is None:
+                    raise PreparationError(
+                        "unknown image directory must use an unknown identity ID: "
+                        f"{unknown_directory.name}"
+                    )
+                session_directory = unknown_directory / session_id
+                if not session_directory.exists():
+                    continue
+                if not session_directory.is_dir():
+                    raise PreparationError(
+                        f"session path is not a directory: {session_directory}"
+                    )
+                for source_path in sorted(session_directory.iterdir()):
+                    if source_path.is_file() and source_path.suffix.casefold() in (
+                        SUPPORTED_SOURCE_SUFFIXES
+                    ):
+                        discovered.append((unknown_directory.name, True, source_path))
             continue
         catalog_id = identity_directory.name
         if catalog_id not in catalog_ids:
@@ -137,7 +160,7 @@ def _discover_session_sources(
             if source_path.is_file() and source_path.suffix.casefold() in (
                 SUPPORTED_SOURCE_SUFFIXES
             ):
-                discovered.append((catalog_id, source_path))
+                discovered.append((catalog_id, False, source_path))
 
     if not discovered:
         raise PreparationError(f"no supported images found for {session_id}")
@@ -171,17 +194,19 @@ def _updated_manifest(
     )
     records = list(existing_records)
 
-    for catalog_id, source_path in _discover_session_sources(
+    for identity_id, is_unknown, source_path in _discover_session_sources(
         private_root=private_root,
         session_id=session_id,
         catalog=catalog,
     ):
+        if is_unknown and split is DatasetSplit.TRAIN:
+            raise PreparationError("unknown identities cannot be assigned to training")
         relative_path = source_path.relative_to(private_root).as_posix()
         existing = existing_by_path.get(relative_path)
         if existing is not None:
-            expected = (catalog_id, session_id, split, ImageSource.OWNER_CAPTURE)
+            expected = (identity_id, session_id, split, ImageSource.OWNER_CAPTURE)
             actual = (
-                existing.catalog_id,
+                existing.identity_key,
                 existing.capture_session_id,
                 existing.split,
                 existing.source,
@@ -198,7 +223,8 @@ def _updated_manifest(
             ImageRecord(
                 image_id=f"img-{next_image_number:06d}",
                 relative_path=relative_path,
-                catalog_id=catalog_id,
+                catalog_id=None if is_unknown else identity_id,
+                unknown_identity_id=identity_id if is_unknown else None,
                 capture_session_id=session_id,
                 source_image_id=f"src-{next_source_number:06d}",
                 split=split,
@@ -347,23 +373,21 @@ def _write_audit_outputs(
     prepared_by_id = {image.image_id: image for image in prepared_images}
     grouped: dict[tuple[str, str], list[PreparedImage]] = defaultdict(list)
     for record in manifest.records:
-        if record.catalog_id is None:
-            continue
-        grouped[(record.capture_session_id, record.catalog_id)].append(
+        grouped[(record.capture_session_id, record.identity_key)].append(
             prepared_by_id[record.image_id]
         )
 
-    for (session_id, catalog_id), images in grouped.items():
+    for (session_id, identity_id), images in grouped.items():
         _contact_sheet(
             prepared_images=images,
             processed_root=processed_root,
-            output_path=(processed_root / "audit" / session_id / f"{catalog_id}.jpg"),
+            output_path=(processed_root / "audit" / session_id / f"{identity_id}.jpg"),
         )
 
     fingerprint = dataset_fingerprint(catalog=catalog, manifest=manifest)
     counts_by_session: dict[str, dict[str, int]] = defaultdict(dict)
-    for (session_id, catalog_id), images in grouped.items():
-        counts_by_session[session_id][catalog_id] = len(images)
+    for (session_id, identity_id), images in grouped.items():
+        counts_by_session[session_id][identity_id] = len(images)
 
     summary = {
         "schema_version": 1,

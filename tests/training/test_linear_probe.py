@@ -149,6 +149,28 @@ def test_training_rejects_test_embeddings_and_mismatched_classes() -> None:
         prepare_linear_probe_data(artifact=mismatched)
 
 
+def test_linear_probe_ignores_unknown_validation_queries() -> None:
+    """Open set validation rows do not become classifier classes."""
+    artifact = _artifact()
+    with_unknown = replace(
+        artifact,
+        image_ids=(*artifact.image_ids, "img-999999"),
+        identity_ids=(*artifact.identity_ids, "unknown-0001"),
+        capture_session_ids=(*artifact.capture_session_ids, "session-004"),
+        splits=(*artifact.splits, "validation"),
+        processed_relative_paths=(*artifact.processed_relative_paths, "unknown.jpg"),
+        embeddings=np.concatenate(
+            [artifact.embeddings, np.asarray([[0.5, 0.5, 0.5]], dtype=np.float32)],
+            axis=0,
+        ),
+    )
+
+    data = prepare_linear_probe_data(artifact=with_unknown)
+
+    assert len(data.validation_image_ids) == 3
+    assert "img-999999" not in data.validation_image_ids
+
+
 def test_checkpoint_hash_detects_tampering(tmp_path: Path) -> None:
     """A modified checkpoint cannot be loaded under unchanged metadata."""
     result = train_linear_probe(
