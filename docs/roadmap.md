@@ -17,10 +17,11 @@ about 44 percent and improved the hardest Lobster view for all three seeds.
 Session 3 contains 42 sealed test photographs and remains closed while the
 exact checkpoint and threshold choices are completed.
 
-The unknown validation workflow is now implemented. The next data task is to
-capture at least one easy negative and one visually similar negative under
-stable unknown IDs in Session 4. The rejection threshold rule is frozen at 95
-percent minimum correct known acceptance before those photographs are reviewed.
+The unknown validation workflow is implemented and Session 4 contains 51
+photographs from four unknown physical products. The first global cosine
+threshold retained 40 of 42 known queries but falsely accepted 7 of 11 Usagi
+posture pal photographs. The next step is to compare additional confidence
+signals on validation data before freezing the open set operating rule.
 
 The modeling order is frozen retrieval, simple aggregation comparisons, a
 linear probe, partial tuning of the final transformer block, and then retrieval
@@ -70,7 +71,7 @@ prove that no capture session or source image crosses dataset splits.
 - [x] Vary pose, distance, background, and lighting according to the protocol
 - [x] Record image provenance and capture-session metadata
 - [x] Reserve one complete session per variant as the untouched test set
-- [ ] Collect non-Usagi plushes and excluded Usagi variants as unknown examples
+- [x] Collect non-Usagi plushes and excluded Usagi variants as unknown examples
 - [x] Audit Session 1 duplicates, corrupted images, labels, and personal data
 - [x] Publish a reviewed Session 1 summary without the original HEIC files
 - [x] Audit and publish the reviewed Session 2 validation summary
@@ -140,7 +141,7 @@ as unnecessary based on the evidence.
 - [ ] Fine-tune a projection head and then, if justified, the final backbone block
 - [ ] Evaluate recall at k and embedding-space separation
 - [ ] Test adding a held-out identity using references without retraining
-- [ ] Record the results as Experiment 005
+- [ ] Record the results as Experiment 006
 
 ### Exit criteria
 
@@ -152,8 +153,8 @@ practical path for adding new catalog identities.
 - [x] Define validation-only threshold-selection rules
 - [x] Implement unknown photo preparation and threshold curve reporting
 - [ ] Compare global and per-identity thresholds
-- [ ] Measure known acceptance versus unknown false acceptance
-- [ ] Test easy negatives, same-character unknowns, and near-duplicate variants
+- [x] Measure known acceptance versus unknown false acceptance
+- [x] Test easy negatives and same-character unknowns
 - [ ] Expose uncertainty instead of forcing every query into a known identity
 - [ ] Freeze the first operating point before final test evaluation
 
