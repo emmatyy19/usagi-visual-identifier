@@ -122,6 +122,9 @@ changing the model.
     compares all six RTX 3060 runs, learning curves, paired seed results,
     confidence margins, difficult views, training cost, and the augmentation
     decision.
+16. The [unknown rejection walkthrough](notebooks/unknown_rejection_walkthrough.ipynb)
+    shows the known and unknown score distributions, selected threshold,
+    identity level results, false accepts, and known rejections.
 
 ## Current status
 
@@ -143,6 +146,13 @@ prepared image audit, and selects a nearest image cosine threshold from
 validation data only. The selection rule retains at least 95 percent of
 correctly identified known validation queries while minimizing false acceptance
 of unknown items.
+
+Session 4 now contains 51 unknown validation photographs from four physical
+objects. A cosine threshold of `0.820814` retained 40 of 42 known queries and
+falsely accepted 7 of 51 unknown queries. Every false accept came from Usagi
+posture pal, an unseen Usagi variant. The unrelated unknown objects were all
+rejected, which shows why visually similar unknowns are essential to the
+evaluation.
 
 The frozen baseline now also has a debugger workflow for predicting one photo
 and measuring warm inference latency. The first Apple Metal benchmark reached a
