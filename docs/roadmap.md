@@ -17,6 +17,11 @@ about 44 percent and improved the hardest Lobster view for all three seeds.
 Session 3 contains 42 sealed test photographs and remains closed while the
 exact checkpoint and threshold choices are completed.
 
+The unknown validation workflow is now implemented. The next data task is to
+capture at least one easy negative and one visually similar negative under
+stable unknown IDs in Session 4. The rejection threshold rule is frozen at 95
+percent minimum correct known acceptance before those photographs are reviewed.
+
 The modeling order is frozen retrieval, simple aggregation comparisons, a
 linear probe, partial tuning of the final transformer block, and then retrieval
 oriented metric learning. Patch level matching is optional and will only be
@@ -144,7 +149,8 @@ practical path for adding new catalog identities.
 
 ## Phase 7: Unknown-item rejection
 
-- [ ] Define validation-only threshold-selection rules
+- [x] Define validation-only threshold-selection rules
+- [x] Implement unknown photo preparation and threshold curve reporting
 - [ ] Compare global and per-identity thresholds
 - [ ] Measure known acceptance versus unknown false acceptance
 - [ ] Test easy negatives, same-character unknowns, and near-duplicate variants

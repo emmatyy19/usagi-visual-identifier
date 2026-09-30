@@ -231,6 +231,65 @@ def test_prepare_session_rejects_unknown_identity_directory(tmp_path: Path) -> N
         )
 
 
+def test_prepare_session_adds_unknown_validation_images(tmp_path: Path) -> None:
+    """Unknown identities receive stable IDs, derivatives, and audit sheets."""
+    private_root = tmp_path / "private"
+    processed_root = tmp_path / "processed"
+    _write_catalog(private_root, count=1)
+    _write_image(
+        private_root,
+        catalog_id="usagi-0001",
+        session_id="session-001",
+        filename="001.png",
+        color=(255, 0, 0),
+    )
+    prepare_session(
+        private_root=private_root,
+        processed_root=processed_root,
+        session_id="session-001",
+        split=DatasetSplit.TRAIN,
+    )
+    unknown_path = private_root / "images/unknown/unknown-0001/session-004/001.png"
+    unknown_path.parent.mkdir(parents=True)
+    Image.new("RGB", (48, 32), (0, 0, 255)).save(unknown_path)
+
+    result = prepare_session(
+        private_root=private_root,
+        processed_root=processed_root,
+        session_id="session-004",
+        split=DatasetSplit.VALIDATION,
+    )
+
+    manifest = load_image_manifest_csv(path=result.manifest_path)
+    unknown = manifest.records[-1]
+    assert unknown.catalog_id is None
+    assert unknown.unknown_identity_id == "unknown-0001"
+    assert unknown.split is DatasetSplit.VALIDATION
+    assert (
+        processed_root / "images/unknown/unknown-0001/session-004/001.jpg"
+    ).is_file()
+    assert (processed_root / "audit/session-004/unknown-0001.jpg").is_file()
+    summary = json.loads(result.summary_path.read_text(encoding="utf-8"))
+    assert summary["counts_by_session"]["session-004"] == {"unknown-0001": 1}
+
+
+def test_prepare_session_rejects_unknown_training_images(tmp_path: Path) -> None:
+    """Unknown examples cannot silently become model training identities."""
+    private_root = tmp_path / "private"
+    _write_catalog(private_root, count=1)
+    unknown_path = private_root / "images/unknown/unknown-0001/session-001/001.png"
+    unknown_path.parent.mkdir(parents=True)
+    Image.new("RGB", (48, 32), (0, 0, 255)).save(unknown_path)
+
+    with pytest.raises(PreparationError, match="cannot be assigned to training"):
+        prepare_session(
+            private_root=private_root,
+            processed_root=tmp_path / "processed",
+            session_id="session-001",
+            split=DatasetSplit.TRAIN,
+        )
+
+
 def test_prepare_session_rejects_corrupt_images(tmp_path: Path) -> None:
     """A corrupt original stops the run before a manifest is published."""
     private_root = tmp_path / "private"

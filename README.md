@@ -137,6 +137,13 @@ measurements, freeze the selected partial tuning checkpoint, and freeze the
 rejection threshold. Metric learning and patch level matching will only be
 added when the earlier results give a clear reason to try them.
 
+The unknown item workflow is ready for the next photo session. It keeps each
+unknown physical product under a stable local ID, includes unknowns in the same
+prepared image audit, and selects a nearest image cosine threshold from
+validation data only. The selection rule retains at least 95 percent of
+correctly identified known validation queries while minimizing false acceptance
+of unknown items.
+
 The frozen baseline now also has a debugger workflow for predicting one photo
 and measuring warm inference latency. The first Apple Metal benchmark reached a
 median warm prediction time of about 91 milliseconds against the 98 image

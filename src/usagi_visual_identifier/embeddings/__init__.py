@@ -36,6 +36,13 @@ from usagi_visual_identifier.embeddings.inference import (
     LatencySummary,
     load_query_image,
 )
+from usagi_visual_identifier.embeddings.open_set import (
+    OpenSetQuery,
+    OpenSetReport,
+    ThresholdMetrics,
+    select_open_set_threshold,
+    write_open_set_report,
+)
 
 __all__ = [
     "DEFAULT_AGGREGATION_CONFIG",
@@ -52,7 +59,10 @@ __all__ = [
     "IdentityMatch",
     "ImagePrediction",
     "LatencySummary",
+    "OpenSetQuery",
+    "OpenSetReport",
     "RetrievalReport",
+    "ThresholdMetrics",
     "build_embedding_artifact",
     "compare_retrieval_aggregations",
     "evaluate_retrieval",
@@ -61,7 +71,9 @@ __all__ = [
     "load_query_image",
     "rank_gallery_identities",
     "select_embedding_examples",
+    "select_open_set_threshold",
     "select_torch_device",
     "write_aggregation_comparison",
+    "write_open_set_report",
     "write_retrieval_report",
 ]

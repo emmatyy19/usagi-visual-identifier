@@ -333,21 +333,22 @@ def prepare_partial_finetune_data(
     *, examples: Sequence[EmbeddingExample]
 ) -> PartialFinetuneData:
     """Select only known training and validation images without reading test files."""
-    train = tuple(
+    all_train = tuple(
         example for example in examples if example.split is DatasetSplit.TRAIN
     )
-    validation = tuple(
-        example for example in examples if example.split is DatasetSplit.VALIDATION
-    )
-    if not train or not validation:
-        raise PartialFinetuneError("both training and validation images are required")
-    if any(
-        not example.identity_id.startswith("usagi-")
-        for example in (*train, *validation)
-    ):
+    if any(not example.identity_id.startswith("usagi-") for example in all_train):
         raise PartialFinetuneError(
             "unknown identities cannot enter closed set partial fine tuning"
         )
+    train = all_train
+    validation = tuple(
+        example
+        for example in examples
+        if example.split is DatasetSplit.VALIDATION
+        and example.identity_id.startswith("usagi-")
+    )
+    if not train or not validation:
+        raise PartialFinetuneError("both training and validation images are required")
     train_classes = {example.identity_id for example in train}
     validation_classes = {example.identity_id for example in validation}
     if train_classes != validation_classes:
