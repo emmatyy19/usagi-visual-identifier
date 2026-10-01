@@ -2,6 +2,39 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Evaluate Final Known Test",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/evaluate_final_known_test.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "USAGI_DEVICE": "auto",
+        "USAGI_BATCH_SIZE": "8"
+      }
+    },
+    {
+      "name": "Select Partial Fine Tuning Checkpoint",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/select_partial_finetune_checkpoint.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Evaluate Selected Partial Fine Tuning",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/evaluate_selected_partial_finetune.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "USAGI_DEVICE": "auto",
+        "USAGI_BATCH_SIZE": "8",
+        "USAGI_MINIMUM_KNOWN_ACCEPTANCE": "0.95"
+      }
+    },
+    {
       "name": "Check Fine Tuning Readiness",
       "type": "debugpy",
       "request": "launch",

@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "decision_date": "2026-09-30",
+  "known_test_split": "session-003",
+  "independent_unknown_test_available": false,
+  "unknown_result_role": "validation_only",
+  "checkpoint_run_id": "c62a6ff28d2e",
+  "operating_points": {
+    "frozen_max_similarity": 0.820814311504364,
+    "tuned_max_similarity": 0.6115514636039734,
+    "tuned_prototype_similarity": 0.604000985622406,
+    "classifier_probability_margin": 0.9900100599043071
+  },
+  "post_test_tuning_allowed": false
+}

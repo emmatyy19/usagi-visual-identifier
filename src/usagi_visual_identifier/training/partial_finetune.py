@@ -322,11 +322,14 @@ class PartialFinetuneModel(nn.Module):
 
     def forward(self, pixel_values: torch.Tensor) -> torch.Tensor:
         """Return logits from normalized CLS embeddings."""
+        return self.classifier(self.embed(pixel_values))
+
+    def embed(self, pixel_values: torch.Tensor) -> torch.Tensor:
+        """Return normalized CLS embeddings from the tuned backbone."""
         raw_output: object = self.backbone(pixel_values=pixel_values)
         output = cast(BackboneOutput, raw_output)
         cls_embedding = output.last_hidden_state[:, 0, :]
-        normalized = functional.normalize(cls_embedding, p=2, dim=1)
-        return self.classifier(normalized)
+        return functional.normalize(cls_embedding, p=2, dim=1)
 
 
 def prepare_partial_finetune_data(

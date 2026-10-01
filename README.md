@@ -65,14 +65,23 @@ similarity search against reference photos
   ↓
 confidence check
   ↓
-known identity or unknown result
+confident match, possible match, or no confident local match
   ↓
 local product information
+  ↓ when I choose to continue
+optional web assisted discovery with source links
+  ↓
+manual confirmation before saving anything
 ```
 
 The vision model will only decide which doll is pictured. Product information
 and changing market data will remain separate so they can be updated without
 changing the model.
+
+The catalog is intentionally personal rather than complete. It can contain
+dolls I own, dolls I know exist, dolls I want, and dolls I do not want. A web
+lookup can help me investigate an unfamiliar doll, but it will return suggestions
+and sources rather than silently creating a trusted catalog record.
 
 ## What I want to learn
 
@@ -125,6 +134,21 @@ changing the model.
 16. The [unknown rejection walkthrough](notebooks/unknown_rejection_walkthrough.ipynb)
     shows the known and unknown score distributions, selected threshold,
     identity level results, false accepts, and known rejections.
+17. The [open set model selection record](docs/experiments/005-unknown-rejection-validation.md)
+    compares four embedding confidence signals and the selected partial fine
+    tuning checkpoint without opening Session 3.
+18. The [open set model selection walkthrough](notebooks/open_set_model_selection_walkthrough.ipynb)
+    visualizes the frozen rule, checkpoint choice, tuned embedding results, and
+    classifier confidence results.
+19. The [final known test](docs/experiments/005b-final-known-test.md) records the
+    one time Session 3 results and the decision to keep unknown rejection as a
+    validation result.
+20. The [personal catalog and discovery design](docs/design/002-personal-catalog-and-discovery.md)
+    defines the local catalog boundary, uncertainty states, optional web lookup,
+    manual verification, and secrets policy.
+21. The [complete project journey](notebooks/project_journey_walkthrough.ipynb)
+    summarizes the dataset, frozen retrieval, linear probe, partial fine tuning,
+    unknown validation, final test, lessons, and personal catalog direction.
 
 ## Current status
 
@@ -134,11 +158,11 @@ photographs. All four frozen DINOv2 aggregation rules correctly identified all
 42 Session 2 queries. Since the added aggregation complexity did not improve
 the validation metrics, nearest image remains the preferred frozen baseline.
 
-Session 3 has been captured under another setup and is sealed for final testing.
-Before opening it, I will add unknown validation examples, finish device latency
-measurements, freeze the selected partial tuning checkpoint, and freeze the
-rejection threshold. Metric learning and patch level matching will only be
-added when the earlier results give a clear reason to try them.
+Session 3 was opened once after the checkpoint and rejection rules were frozen.
+Frozen and tuned nearest image retrieval each identified 41 of 42 known photos
+correctly. Tuned prototype retrieval and the classifier each identified 40 of
+42, and every system placed the correct identity in its top three for all 42
+photos. Session 3 is now closed to further model or threshold selection.
 
 The unknown item workflow is ready for the next photo session. It keeps each
 unknown physical product under a stable local ID, includes unknowns in the same
@@ -148,11 +172,15 @@ correctly identified known validation queries while minimizing false acceptance
 of unknown items.
 
 Session 4 now contains 51 unknown validation photographs from four physical
-objects. A cosine threshold of `0.820814` retained 40 of 42 known queries and
-falsely accepted 7 of 51 unknown queries. Every false accept came from Usagi
-posture pal, an unseen Usagi variant. The unrelated unknown objects were all
-rejected, which shows why visually similar unknowns are essential to the
-evaluation.
+objects. Maximum similarity was the strongest confidence rule for frozen
+DINOv2. A threshold of `0.820814` retained 40 of 42 known queries and falsely
+accepted 7 of 51 unknown queries. The selected partial fine tuning checkpoint
+improved the same rule to 41 correct known accepts and 4 unknown false accepts.
+Tuned prototype similarity and classifier probability margin both reached zero
+unknown false accepts at the required known retention. I chose not to collect
+or redistribute third party social media photos, so there is no independent
+unknown final test. These unknown rejection results remain validation evidence
+and are not presented as proof of reliable rejection on new Usagi variants.
 
 The frozen baseline now also has a debugger workflow for predicting one photo
 and measuring warm inference latency. The first Apple Metal benchmark reached a
@@ -167,9 +195,16 @@ accuracy, so nearest image remains the preferred product baseline.
 The partial fine tuning experiment is complete on the RTX 3060. All six runs
 reached perfect Session 2 accuracy. Conservative augmentation lowered mean
 validation loss by about 44 percent and improved the most difficult Lobster
-view for every seed. These results select the augmentation policy, but Session
-3 remains sealed until the exact checkpoint and final evaluation protocol are
-frozen.
+view for every seed. Run `c62a6ff28d2e` was frozen because it had the lowest
+known validation loss among the conservative runs. It did not improve final
+Top 1 accuracy over frozen nearest image retrieval.
+
+The next milestone is a private local catalog application. It will use nearest
+image retrieval for my photographed collection, show uncertainty instead of
+forcing every upload into a known identity, and let me review optional web
+lookup results when there is no convincing local match. Metric learning and
+multi doll detection are now optional future work rather than requirements for
+the first useful application.
 
 ## Development setup
 

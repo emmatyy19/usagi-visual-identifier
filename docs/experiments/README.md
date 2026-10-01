@@ -12,6 +12,8 @@ Name records sequentially:
 002-frozen-dinov2-session-002-validation.md
 003-linear-probe.md
 004-partial-fine-tuning.md
+005-unknown-rejection-validation.md
+005b-final-known-test.md
 ```
 
 Copy [`template.md`](template.md) when beginning an experiment. Complete the

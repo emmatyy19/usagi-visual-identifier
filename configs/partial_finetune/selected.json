@@ -1,0 +1,19 @@
+{
+  "checkpoint_sha256": "79a41f985a890c40c08575e16d60e80d7070a709594de07a6a5d3b711b85f6ef",
+  "dataset_fingerprint": "27c73c3bc69640bb10b36f4846270847dea4fe871cedeee516b7f58badd9a634",
+  "model_id": "facebook/dinov2-small",
+  "model_revision": "ed25f3a31f01632728cabb09d1542f84ab7b0056",
+  "run_id": "c62a6ff28d2e",
+  "schema_version": 1,
+  "seed": 42,
+  "selected_epoch": 22,
+  "selection_data": "known_validation_only",
+  "selection_policy": {
+    "direction": "minimum",
+    "metric": "validation_loss",
+    "required_augmentation": "conservative",
+    "tie_breaker": "lowest_seed"
+  },
+  "test_split_accessed": false,
+  "validation_loss": 0.0023071798495948315
+}
