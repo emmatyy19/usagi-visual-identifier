@@ -37,10 +37,14 @@ from usagi_visual_identifier.embeddings.inference import (
     load_query_image,
 )
 from usagi_visual_identifier.embeddings.open_set import (
+    ConfidenceComparisonReport,
+    ConfidenceMethod,
     OpenSetQuery,
     OpenSetReport,
     ThresholdMetrics,
+    compare_confidence_methods,
     select_open_set_threshold,
+    write_confidence_comparison,
     write_open_set_report,
 )
 
@@ -51,6 +55,8 @@ __all__ = [
     "AggregationComparisonReport",
     "AggregationConfig",
     "AggregationMethod",
+    "ConfidenceComparisonReport",
+    "ConfidenceMethod",
     "Dinov2Encoder",
     "EmbeddingArtifact",
     "EmbeddingBuildResult",
@@ -64,6 +70,7 @@ __all__ = [
     "RetrievalReport",
     "ThresholdMetrics",
     "build_embedding_artifact",
+    "compare_confidence_methods",
     "compare_retrieval_aggregations",
     "evaluate_retrieval",
     "load_embedding_artifact",
@@ -74,6 +81,7 @@ __all__ = [
     "select_open_set_threshold",
     "select_torch_device",
     "write_aggregation_comparison",
+    "write_confidence_comparison",
     "write_open_set_report",
     "write_retrieval_report",
 ]

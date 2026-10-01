@@ -12,6 +12,8 @@ from usagi_visual_identifier.embeddings.artifacts import (
     EmbeddingError,
 )
 from usagi_visual_identifier.embeddings.open_set import (
+    ConfidenceMethod,
+    compare_confidence_methods,
     select_open_set_threshold,
     write_open_set_report,
 )
@@ -170,3 +172,28 @@ def test_open_set_reports_when_known_retention_is_impossible() -> None:
             artifact=replace(artifact, embeddings=confused),
             minimum_known_correct_acceptance=1.0,
         )
+
+
+@pytest.mark.parametrize("method", tuple(ConfidenceMethod))
+def test_each_confidence_method_uses_validation_only(
+    method: ConfidenceMethod,
+) -> None:
+    """Every predeclared confidence signal produces a valid operating curve."""
+    report = select_open_set_threshold(
+        artifact=_open_set_artifact(),
+        minimum_known_correct_acceptance=1.0,
+        confidence_method=method,
+    )
+    assert report.confidence_method is method
+    assert report.selected.known_correct_accepted == 2
+    assert all(query.accepted for query in report.queries if query.is_known)
+
+
+def test_confidence_comparison_prefers_simple_method_on_tie() -> None:
+    """The declared complexity order makes tied selection deterministic."""
+    comparison = compare_confidence_methods(
+        artifact=_open_set_artifact(),
+        minimum_known_correct_acceptance=1.0,
+    )
+    assert comparison.selected_method is ConfidenceMethod.MAX_SIMILARITY
+    assert len(comparison.reports) == len(ConfidenceMethod)

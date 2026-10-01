@@ -150,6 +150,11 @@ A more complex model replaces the current preferred system only if it:
 Final test metrics confirm a frozen decision; they do not trigger another round
 of tuning on the same test set.
 
+Session 3 was opened once on September 30, 2026 after the checkpoint,
+aggregation rules, and thresholds were frozen. It is now closed to further
+selection. No independent unknown final test was collected, so Session 4
+unknown rejection metrics remain validation results only.
+
 ## Failure review
 
 For every major experiment, review representative examples of:
