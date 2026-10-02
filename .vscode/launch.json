@@ -2,6 +2,17 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Run Personal Catalog API",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/run_catalog_app.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "USAGI_CATALOG_DB": "${workspaceFolder}/private/catalog.sqlite3"
+      }
+    },
+    {
       "name": "Evaluate Final Known Test",
       "type": "debugpy",
       "request": "launch",
