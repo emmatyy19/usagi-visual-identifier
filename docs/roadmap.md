@@ -35,12 +35,20 @@ extra training did not improve final Top 1 accuracy, so deeper tuning and metric
 learning are no longer required milestones. They remain optional learning
 experiments.
 
-The next product goal is a private personal catalog. It will track dolls I own,
+The current product goal is a private personal catalog. It will track dolls I own,
 dolls I know exist, dolls I want, dolls I do not want, source links, and notes
 about availability. Local retrieval will search my photographed collection.
 When there is no confident local match, an optional web assisted lookup can
 suggest names and source pages for me to review. It will not silently add web
 results to the catalog or treat them as verified facts.
+
+The catalog will have one shared Python service and database. The first client
+will be a normal private web interface for uploading a photograph and managing
+catalog records. A later native iPhone companion can use the Meta Wearables
+Device Access Toolkit to capture images from my Meta Ray Ban Display glasses
+and show identification results on the glasses. Both clients will use the same
+identification API and catalog. A separate glasses Web App is not required for
+the first Usagi Scout workflow.
 
 ## Phase 0: Define the experiment
 
@@ -193,12 +201,14 @@ independent unknown final test.
 
 ## Phase 8: Local catalog application
 
-- [ ] Define a small SQLite schema and migration strategy for the personal catalog
-- [ ] Track owned, known to exist, wanted, and not wanted status independently
-- [ ] Store a preferred name, distinguishing details, notes, and verification status
-- [ ] Store reviewed source links and optional availability notes with timestamps
-- [ ] Link photographed identities to personal catalog records without requiring a complete official catalog
+- [x] Define a small SQLite schema and migration strategy for the personal catalog
+- [x] Track owned, known to exist, wanted, and not wanted status independently
+- [x] Store a preferred name, distinguishing details, notes, and verification status
+- [ ] Add source link and availability operations on top of the initial schema
+- [x] Link photographed identities to personal catalog records without requiring a complete official catalog
+- [x] Add a typed repository and local HTTP API for catalog records
 - [ ] Build a private local web interface for uploading one cropped doll photograph
+- [ ] Connect uploads to the selected retrieval model and frozen uncertainty rule
 - [ ] Display top matches, reference evidence, and calibrated uncertainty wording
 - [ ] Allow manual confirmation and correction without silently creating training data
 - [ ] Preserve model, gallery, threshold, and catalog version provenance
@@ -208,6 +218,27 @@ independent unknown final test.
 
 I can submit one cropped doll photograph, review likely local matches, confirm
 or reject the suggestion, and open or create a personal catalog record.
+
+## Phase 8A: Native Usagi Scout companion
+
+This phase reuses the completed catalog service rather than creating a second
+product. The iPhone app is the supported bridge to the glasses camera, display,
+inputs, and voice features.
+
+- [ ] Confirm the glasses, Meta AI app, iPhone, and developer mode requirements
+- [ ] Create a minimal iOS app from the official Device Access Toolkit sample
+- [ ] Connect to the glasses and capture one still image or selected video frame
+- [ ] Send the image to the same private identification API used by the web client
+- [ ] Show confident, possible, and no confident match states on the glasses
+- [ ] Support retry, inspect alternatives, and confirm actions from glasses input
+- [ ] Save only manually confirmed catalog activity
+- [ ] Measure end to end latency and compare glasses photos with phone photos
+
+### Exit criteria
+
+I can look at one doll, start identification from the glasses, review the result
+on the display, and confirm or retry without creating a separate catalog or
+model pipeline.
 
 ## Phase 9: Optional web assisted discovery
 
@@ -249,3 +280,5 @@ to be a complete or authoritative market database.
 - Generative answers before the underlying identity and metadata are reliable
 - Metric learning unless a larger, independently testable identity dataset becomes available
 - Multi doll detection until the single doll personal catalog workflow is useful
+- A separate Meta Ray Ban Display Web App unless it later adds value beyond the
+  native Usagi Scout companion

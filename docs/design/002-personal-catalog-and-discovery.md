@@ -58,6 +58,27 @@ be committed. Query history, personal ownership decisions, purchase notes, and
 downloaded images also remain local. The public repository can include provider
 interfaces, configuration examples, and synthetic test responses.
 
+## Application shape
+
+The first application has one private Python service, one SQLite database, and
+one browser client. The browser client will upload a photograph, show local
+matches and uncertainty, and manage catalog records.
+
+A later native iPhone companion will provide the wearable flow. It can use the
+Meta Wearables Device Access Toolkit to receive frames from the glasses and
+render concise results on the glasses display. It will call the same Python API
+as the browser client. It will not own a second model, threshold, or catalog.
+
+The shared service boundary is intentional. A browser upload and a glasses
+capture differ only in how the image reaches the identifier and how the result
+is presented. The model response, catalog record, source links, and manual
+confirmation rules remain the same.
+
+The initial catalog schema gives each personal record its own random stable ID.
+An optional `usagi-####` link connects it to a photographed model identity.
+This keeps an unowned or unphotographed doll in the catalog without pretending
+that the model can recognize it.
+
 ## Why metric learning is optional
 
 Frozen and tuned nearest image retrieval each identified 41 of 42 known final

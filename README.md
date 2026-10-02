@@ -149,6 +149,9 @@ and sources rather than silently creating a trusted catalog record.
 21. The [complete project journey](notebooks/project_journey_walkthrough.ipynb)
     summarizes the dataset, frozen retrieval, linear probe, partial fine tuning,
     unknown validation, final test, lessons, and personal catalog direction.
+22. The [personal catalog application guide](docs/application/personal-catalog.md)
+    explains the private database, migration strategy, current API, debugger
+    launch, and next browser application slice.
 
 ## Current status
 
@@ -199,12 +202,17 @@ view for every seed. Run `c62a6ff28d2e` was frozen because it had the lowest
 known validation loss among the conservative runs. It did not improve final
 Top 1 accuracy over frozen nearest image retrieval.
 
-The next milestone is a private local catalog application. It will use nearest
-image retrieval for my photographed collection, show uncertainty instead of
-forcing every upload into a known identity, and let me review optional web
-lookup results when there is no convincing local match. Metric learning and
-multi doll detection are now optional future work rather than requirements for
-the first useful application.
+The private catalog application is now underway. Its first foundation uses a
+versioned SQLite database, typed catalog records, and a local HTTP API. It keeps
+ownership, interest, verification, and the optional link to a photographed
+identity separate. The next slice will add the browser interface and connect a
+photo upload to the selected retrieval model and uncertainty rule.
+
+I also plan to experiment with my Meta Ray Ban Display glasses through a native
+iPhone companion. The browser and glasses flows will share the same Python
+identifier and personal catalog. The glasses app will be another client, not a
+separate model or database. Metric learning and multi doll detection remain
+optional future work rather than requirements for the first useful application.
 
 ## Development setup
 
