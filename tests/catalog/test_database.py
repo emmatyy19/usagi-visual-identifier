@@ -50,8 +50,8 @@ def test_database_rejects_changed_migration_history(tmp_path: Path) -> None:
         database.initialize()
 
 
-def test_database_schema_enforces_interest_constraint(tmp_path: Path) -> None:
-    """SQLite keeps contradictory status out even outside the Python models."""
+def test_database_schema_enforces_interest_values(tmp_path: Path) -> None:
+    """SQLite keeps invented interest levels out beyond the Python boundary."""
     database = CatalogDatabase(tmp_path / "catalog.sqlite3")
     database.initialize()
     with database.connect() as connection, pytest.raises(sqlite3.IntegrityError):
@@ -59,8 +59,8 @@ def test_database_schema_enforces_interest_constraint(tmp_path: Path) -> None:
             """
             INSERT INTO catalog_records (
                 record_id, preferred_name, product_type, verification_status,
-                known_to_exist, owned, wanted, not_wanted, created_at, updated_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                known_to_exist, owned, interest_level, created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 "item-0123456789abcdef0123456789abcdef",
@@ -69,8 +69,7 @@ def test_database_schema_enforces_interest_constraint(tmp_path: Path) -> None:
                 "unverified",
                 1,
                 0,
-                1,
-                1,
+                "must_have_at_any_cost",
                 "2026-01-01T00:00:00+00:00",
                 "2026-01-01T00:00:00+00:00",
             ),

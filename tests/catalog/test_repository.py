@@ -9,6 +9,7 @@ from usagi_visual_identifier.catalog.database import CatalogDatabase
 from usagi_visual_identifier.catalog.models import (
     CatalogRecordCreate,
     CatalogRecordUpdate,
+    InterestLevel,
     VerificationStatus,
 )
 from usagi_visual_identifier.catalog.repository import (
@@ -45,8 +46,8 @@ def test_repository_creates_lists_gets_and_updates(
     updated = repository.update_record(
         record_id=first.record_id,
         changes=CatalogRecordUpdate(
-            wanted=True,
             owned=False,
+            interest_level=InterestLevel.ACTIVELY_LOOKING,
             verification_status=VerificationStatus.MANUALLY_VERIFIED,
             notes="Confirmed from the product tag.",
         ),
@@ -54,7 +55,7 @@ def test_repository_creates_lists_gets_and_updates(
     assert updated.record_id == first.record_id
     assert updated.created_at == first.created_at
     assert updated.updated_at >= first.updated_at
-    assert updated.wanted is True
+    assert updated.interest_level is InterestLevel.ACTIVELY_LOOKING
     assert updated.owned is False
     assert repository.get_record(first.record_id) == updated
 
@@ -75,14 +76,14 @@ def test_repository_rejects_duplicate_visual_identity(
 
 
 def test_repository_validates_merged_update(repository: CatalogRepository) -> None:
-    """A partial patch cannot create a contradictory complete record."""
+    """A partial patch cannot contradict the rest of the complete record."""
     record = repository.create_record(
-        CatalogRecordCreate(preferred_name="Example", wanted=True)
+        CatalogRecordCreate(preferred_name="Example", owned=True)
     )
-    with pytest.raises(ValidationError, match="wanted and not wanted"):
+    with pytest.raises(ValidationError, match="owned catalog record"):
         repository.update_record(
             record_id=record.record_id,
-            changes=CatalogRecordUpdate(not_wanted=True),
+            changes=CatalogRecordUpdate(known_to_exist=False),
         )
 
 

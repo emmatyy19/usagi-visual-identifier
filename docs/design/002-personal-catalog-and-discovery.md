@@ -14,8 +14,8 @@ A catalog record can represent a doll I own or a doll I only know exists. The
 record should keep these decisions separate:
 
 - whether I own it;
-- whether I want it;
-- whether I explicitly do not want it;
+- whether I am not interested, think it would be nice to have, would buy it, or
+  am actively looking for it;
 - whether its name and details have been manually verified;
 - whether I have owner captured reference photographs;
 - where I previously found useful information or a listing.

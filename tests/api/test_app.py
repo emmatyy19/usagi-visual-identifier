@@ -36,10 +36,10 @@ def test_catalog_api_lifecycle(tmp_path: Path) -> None:
 
         updated_response = client.patch(
             f"/api/catalog/{record_id}",
-            json={"owned": False, "wanted": True},
+            json={"owned": False, "interest_level": "actively_looking"},
         )
         assert updated_response.status_code == 200
-        assert updated_response.json()["wanted"] is True
+        assert updated_response.json()["interest_level"] == "actively_looking"
         assert updated_response.json()["owned"] is False
 
 
@@ -51,11 +51,7 @@ def test_catalog_api_reports_validation_missing_and_conflict(tmp_path: Path) -> 
         client = cast(httpx2.Client, test_client)
         invalid = client.post(
             "/api/catalog",
-            json={
-                "preferred_name": "Impossible",
-                "wanted": True,
-                "not_wanted": True,
-            },
+            json={"preferred_name": "Impossible", "interest_level": "must_have"},
         )
         assert invalid.status_code == 422
         assert client.get(f"/api/catalog/{missing}").status_code == 404

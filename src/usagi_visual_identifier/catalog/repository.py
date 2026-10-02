@@ -65,9 +65,9 @@ class CatalogRepository:
                     INSERT INTO catalog_records (
                         record_id, preferred_name, product_type,
                         distinguishing_details, notes, verification_status,
-                        known_to_exist, owned, wanted, not_wanted,
+                        known_to_exist, owned, interest_level,
                         linked_identity_id, created_at, updated_at
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     self._record_values(record),
                 )
@@ -98,7 +98,7 @@ class CatalogRepository:
                         preferred_name = ?, product_type = ?,
                         distinguishing_details = ?, notes = ?,
                         verification_status = ?, known_to_exist = ?, owned = ?,
-                        wanted = ?, not_wanted = ?, linked_identity_id = ?,
+                        interest_level = ?, linked_identity_id = ?,
                         updated_at = ?
                     WHERE record_id = ?
                     """,
@@ -110,8 +110,7 @@ class CatalogRepository:
                         updated.verification_status.value,
                         int(updated.known_to_exist),
                         int(updated.owned),
-                        int(updated.wanted),
-                        int(updated.not_wanted),
+                        updated.interest_level.value,
                         updated.linked_identity_id,
                         updated.updated_at.isoformat(),
                         updated.record_id,
@@ -137,8 +136,7 @@ class CatalogRepository:
             record.verification_status.value,
             int(record.known_to_exist),
             int(record.owned),
-            int(record.wanted),
-            int(record.not_wanted),
+            record.interest_level.value,
             record.linked_identity_id,
             record.created_at.isoformat(),
             record.updated_at.isoformat(),
@@ -157,8 +155,7 @@ class CatalogRepository:
             "verification_status",
             "known_to_exist",
             "owned",
-            "wanted",
-            "not_wanted",
+            "interest_level",
             "linked_identity_id",
             "created_at",
             "updated_at",
@@ -175,8 +172,7 @@ class CatalogRepository:
                 "verification_status": cast(str, row["verification_status"]),
                 "known_to_exist": bool(row["known_to_exist"]),
                 "owned": bool(row["owned"]),
-                "wanted": bool(row["wanted"]),
-                "not_wanted": bool(row["not_wanted"]),
+                "interest_level": cast(str, row["interest_level"]),
                 "linked_identity_id": cast(str | None, row["linked_identity_id"]),
                 "created_at": cast(str, row["created_at"]),
                 "updated_at": cast(str, row["updated_at"]),

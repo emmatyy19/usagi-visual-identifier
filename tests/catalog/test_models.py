@@ -9,6 +9,7 @@ from usagi_visual_identifier.catalog.models import (
     CatalogRecord,
     CatalogRecordCreate,
     CatalogRecordUpdate,
+    InterestLevel,
 )
 
 
@@ -17,27 +18,18 @@ def test_catalog_record_accepts_independent_personal_statuses() -> None:
     record = CatalogRecordCreate(
         preferred_name="Magical Usagi",
         owned=True,
-        wanted=False,
+        interest_level=InterestLevel.WOULD_BUY,
         linked_identity_id="usagi-0004",
     )
     assert record.known_to_exist is True
     assert record.owned is True
-    assert record.wanted is False
+    assert record.interest_level is InterestLevel.WOULD_BUY
 
 
-@pytest.mark.parametrize(
-    "value",
-    (
-        {"preferred_name": "Example", "wanted": True, "not_wanted": True},
-        {"preferred_name": "Example", "owned": True, "known_to_exist": False},
-    ),
-)
-def test_catalog_record_rejects_contradictory_statuses(
-    value: dict[str, object],
-) -> None:
+def test_catalog_record_rejects_contradictory_statuses() -> None:
     """Impossible personal status combinations fail at validation."""
     with pytest.raises(ValidationError):
-        CatalogRecordCreate.model_validate(value)
+        CatalogRecordCreate(preferred_name="Example", owned=True, known_to_exist=False)
 
 
 def test_catalog_update_requires_an_explicit_field() -> None:

@@ -202,7 +202,7 @@ independent unknown final test.
 ## Phase 8: Local catalog application
 
 - [x] Define a small SQLite schema and migration strategy for the personal catalog
-- [x] Track owned, known to exist, wanted, and not wanted status independently
+- [x] Track ownership separately from a graded personal interest level
 - [x] Store a preferred name, distinguishing details, notes, and verification status
 - [ ] Add source link and availability operations on top of the initial schema
 - [x] Link photographed identities to personal catalog records without requiring a complete official catalog

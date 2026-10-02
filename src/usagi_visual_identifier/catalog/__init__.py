@@ -5,6 +5,7 @@ from usagi_visual_identifier.catalog.models import (
     CatalogRecord,
     CatalogRecordCreate,
     CatalogRecordUpdate,
+    InterestLevel,
     VerificationStatus,
 )
 from usagi_visual_identifier.catalog.repository import CatalogRepository
@@ -15,5 +16,6 @@ __all__ = [
     "CatalogRecordCreate",
     "CatalogRecordUpdate",
     "CatalogRepository",
+    "InterestLevel",
     "VerificationStatus",
 ]

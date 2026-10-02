@@ -29,12 +29,14 @@ MIGRATIONS = (
                 known_to_exist INTEGER NOT NULL DEFAULT 1
                     CHECK (known_to_exist IN (0, 1)),
                 owned INTEGER NOT NULL DEFAULT 0 CHECK (owned IN (0, 1)),
-                wanted INTEGER NOT NULL DEFAULT 0 CHECK (wanted IN (0, 1)),
-                not_wanted INTEGER NOT NULL DEFAULT 0 CHECK (not_wanted IN (0, 1)),
+                interest_level TEXT NOT NULL DEFAULT 'unknown'
+                    CHECK (interest_level IN (
+                        'unknown', 'not_interested', 'nice_to_have',
+                        'would_buy', 'actively_looking'
+                    )),
                 linked_identity_id TEXT UNIQUE,
                 created_at TEXT NOT NULL,
                 updated_at TEXT NOT NULL,
-                CHECK (NOT (wanted = 1 AND not_wanted = 1)),
                 CHECK (NOT (owned = 1 AND known_to_exist = 0))
             )
             """,

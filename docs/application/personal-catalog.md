@@ -11,7 +11,7 @@ The first implementation provides:
 
 1. versioned SQLite migrations;
 2. typed catalog create, update, and response records;
-3. independent known, owned, wanted, and not wanted fields;
+3. independent known and owned fields plus a graded personal interest level;
 4. an optional link from a personal record to one photographed `usagi-####`
    identity;
 5. local API endpoints for health, listing, creation, lookup, and updates;
@@ -19,6 +19,11 @@ The first implementation provides:
 
 The migration also creates a source link table. Source link and availability
 operations will be added in a later application slice.
+
+The interest level is one of `unknown`, `not_interested`, `nice_to_have`,
+`would_buy`, or `actively_looking`. Named levels keep the meaning clearer than
+a numeric rating while still supporting useful wish list sorting. Ownership is
+separate because I may already own a doll and still want another copy.
 
 ## Local data
 

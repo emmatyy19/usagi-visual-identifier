@@ -18,6 +18,16 @@ class VerificationStatus(StrEnum):
     MANUALLY_VERIFIED = "manually_verified"
 
 
+class InterestLevel(StrEnum):
+    """Personal acquisition interest from undecided to active searching."""
+
+    UNKNOWN = "unknown"
+    NOT_INTERESTED = "not_interested"
+    NICE_TO_HAVE = "nice_to_have"
+    WOULD_BUY = "would_buy"
+    ACTIVELY_LOOKING = "actively_looking"
+
+
 class CatalogRecordBase(BaseModel):
     """Fields shared by create requests and stored catalog records."""
 
@@ -30,15 +40,12 @@ class CatalogRecordBase(BaseModel):
     verification_status: VerificationStatus = VerificationStatus.UNVERIFIED
     known_to_exist: bool = True
     owned: bool = False
-    wanted: bool = False
-    not_wanted: bool = False
+    interest_level: InterestLevel = InterestLevel.UNKNOWN
     linked_identity_id: LinkedIdentityId | None = None
 
     @model_validator(mode="after")
-    def validate_interest(self) -> Self:
-        """Reject mutually exclusive personal interest decisions."""
-        if self.wanted and self.not_wanted:
-            raise ValueError("a catalog record cannot be wanted and not wanted")
+    def validate_ownership(self) -> Self:
+        """Require an owned item to be acknowledged as existing."""
         if self.owned and not self.known_to_exist:
             raise ValueError("an owned catalog record must be known to exist")
         return self
@@ -60,8 +67,7 @@ class CatalogRecordUpdate(BaseModel):
     verification_status: VerificationStatus | None = None
     known_to_exist: bool | None = None
     owned: bool | None = None
-    wanted: bool | None = None
-    not_wanted: bool | None = None
+    interest_level: InterestLevel | None = None
     linked_identity_id: LinkedIdentityId | None = None
 
     @model_validator(mode="after")
