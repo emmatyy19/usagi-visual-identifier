@@ -1784,6 +1784,15 @@ wheels = [
 ]
 
 [[package]]
+name = "python-multipart"
+version = "0.0.32"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/5b/42/55c32bb9b12693c092ad250a0e82edb5b31ddeda6eb772de5f308b3804ad/python_multipart-0.0.32.tar.gz", hash = "sha256:be54b7f3fa167bb83e4fcd936b887b708f4e57fe75911c02aebf53efaf8d938e", size = 46881, upload-time = "2026-06-04T16:18:58.647Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e1/04/e8135ebd1ad02c56ec633277529b2602ff99ff634be76cdba5744cf554fd/python_multipart-0.0.32-py3-none-any.whl", hash = "sha256:ff6d3f776f16878c894e52e107296ffc890e913c611b1a4ec6c44e2821fe2e23", size = 30042, upload-time = "2026-06-04T16:18:57.319Z" },
+]
+
+[[package]]
 name = "pytorch-metric-learning"
 version = "2.9.0"
 source = { registry = "https://pypi.org/simple" }
@@ -2416,12 +2425,14 @@ source = { editable = "." }
 dependencies = [
     { name = "fastapi" },
     { name = "imagehash" },
+    { name = "jinja2" },
     { name = "matplotlib" },
     { name = "numpy" },
     { name = "pandas" },
     { name = "pillow" },
     { name = "pillow-heif" },
     { name = "pydantic" },
+    { name = "python-multipart" },
     { name = "pytorch-metric-learning" },
     { name = "rich" },
     { name = "safetensors" },
@@ -2451,12 +2462,14 @@ dev = [
 requires-dist = [
     { name = "fastapi", specifier = ">=0.118.0" },
     { name = "imagehash", specifier = ">=4.3.2" },
+    { name = "jinja2", specifier = ">=3.1.6" },
     { name = "matplotlib", specifier = ">=3.10.0" },
     { name = "numpy", specifier = ">=2.2.0" },
     { name = "pandas", specifier = ">=2.2.0" },
     { name = "pillow", specifier = ">=11.0.0" },
     { name = "pillow-heif", specifier = ">=1.1.0" },
     { name = "pydantic", specifier = ">=2.10.0" },
+    { name = "python-multipart", specifier = ">=0.0.20" },
     { name = "pytorch-metric-learning", specifier = ">=2.8.0" },
     { name = "rich", specifier = ">=14.0.0" },
     { name = "safetensors", specifier = ">=0.6.0" },

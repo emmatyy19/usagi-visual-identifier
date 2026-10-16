@@ -202,11 +202,12 @@ view for every seed. Run `c62a6ff28d2e` was frozen because it had the lowest
 known validation loss among the conservative runs. It did not improve final
 Top 1 accuracy over frozen nearest image retrieval.
 
-The private catalog application is now underway. Its first foundation uses a
-versioned SQLite database, typed catalog records, and a local HTTP API. It keeps
+The private catalog application is now underway. It uses a versioned SQLite
+database, typed catalog records, and a local HTTP API. A responsive browser
+interface can browse, filter, create, and edit personal records while keeping
 ownership, interest, verification, and the optional link to a photographed
-identity separate. The next slice will add the browser interface and connect a
-photo upload to the selected retrieval model and uncertainty rule.
+identity separate. The next slice will connect a photo upload to the selected
+retrieval model and uncertainty rule.
 
 I also plan to experiment with my Meta Ray Ban Display glasses through a native
 iPhone companion. The browser and glasses flows will share the same Python

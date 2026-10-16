@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block content %}
+  <section class="page-heading">
+    <a class="back-link" href="/catalog">← Back to catalog</a>
+    <p class="eyebrow">{% if record and record.record_id %}Catalog record{% else %}New record{% endif %}</p>
+    <h1>{{ heading }}</h1>
+    {% if record and record.record_id %}<p class="record-id">{{ record.record_id }}</p>{% else %}<p>Start with what you know. Everything can be updated later.</p>{% endif %}
+  </section>
+
+  {% if error %}
+    <div class="error-message" role="alert"><strong>This record was not saved.</strong><span>{{ error }}</span></div>
+  {% endif %}
+
+  <form class="record-form" method="post" action="{{ action }}">
+    <section class="form-section">
+      <div class="section-heading"><span>1</span><div><h2>Basic details</h2><p>The preferred name can be informal.</p></div></div>
+      <div class="field-grid">
+        <label class="field field-wide">Preferred name
+          <input name="preferred_name" required maxlength="200" value="{{ record.preferred_name if record else '' }}" placeholder="Magical Usagi">
+        </label>
+        <label class="field">Product type
+          <input name="product_type" required maxlength="100" value="{{ record.product_type if record else 'plush' }}">
+        </label>
+        <label class="field">Model identity
+          <input name="linked_identity_id" pattern="usagi-[0-9]{4}" value="{{ record.linked_identity_id or '' if record else '' }}" placeholder="usagi-0004">
+          <small>Optional link to a photographed identity</small>
+        </label>
+        <label class="field field-wide">Distinguishing details
+          <textarea name="distinguishing_details" maxlength="2000" rows="3" placeholder="Yellow bow, white dress, star accessory">{{ record.distinguishing_details if record else '' }}</textarea>
+        </label>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <div class="section-heading"><span>2</span><div><h2>My collection</h2><p>Interest is for dolls I do not own yet.</p></div></div>
+      <div class="choice-grid">
+        <label class="check-choice">
+          <input type="checkbox" name="known_to_exist" {% if record is none or record.known_to_exist %}checked{% endif %}>
+          <span><strong>Known to exist</strong><small>I have confirmed this is a real variant</small></span>
+        </label>
+        <label class="check-choice">
+          <input type="checkbox" name="owned" {% if record and record.owned %}checked{% endif %}>
+          <span><strong>Owned</strong><small>This doll is currently in my collection</small></span>
+        </label>
+      </div>
+      <label class="field interest-field">Interest level
+        <select name="interest_level">
+          {% for value, label in interest_options %}
+            <option value="{{ value.value }}" {% if record and record.interest_level == value %}selected{% elif not record and value.value == 'unknown' %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </label>
+    </section>
+
+    <section class="form-section">
+      <div class="section-heading"><span>3</span><div><h2>Verification and notes</h2><p>Keep guesses separate from details you have checked.</p></div></div>
+      <label class="field">Verification
+        <select name="verification_status">
+          {% for value, label in verification_options %}
+            <option value="{{ value.value }}" {% if record and record.verification_status == value %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label class="field">Notes
+        <textarea name="notes" maxlength="10000" rows="6" placeholder="Release details, where I saw it, or anything I want to remember">{{ record.notes if record else '' }}</textarea>
+      </label>
+    </section>
+
+    <div class="form-actions">
+      <a class="button button-secondary" href="/catalog">Cancel</a>
+      <button class="button" type="submit">{{ submit_label }}</button>
+    </div>
+  </form>
+{% endblock %}
