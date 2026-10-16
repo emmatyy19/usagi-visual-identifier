@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% set page_title = "My Usagi Shelf" %}
+{% block content %}
+  <section class="hero">
+    <div>
+      <p class="eyebrow">Personal catalog</p>
+      <h1>My Usagi shelf</h1>
+      <p class="hero-copy">A small home for the dolls I own, like, and hope to find.</p>
+    </div>
+    <a class="button" href="/catalog/new">Add a doll</a>
+  </section>
+
+  <section class="stats" aria-label="Catalog summary">
+    <div><strong>{{ total_count }}</strong><span>Known dolls</span></div>
+    <div><strong>{{ owned_count }}</strong><span>Owned</span></div>
+    <div><strong>{{ looking_count }}</strong><span>Actively looking</span></div>
+  </section>
+
+  <form class="filters" method="get" action="/catalog">
+    <label>Ownership
+      <select name="ownership">
+        <option value="all" {% if ownership == "all" %}selected{% endif %}>All dolls</option>
+        <option value="owned" {% if ownership == "owned" %}selected{% endif %}>Owned</option>
+        <option value="not_owned" {% if ownership == "not_owned" %}selected{% endif %}>Not owned</option>
+      </select>
+    </label>
+    <label class="interest-filter">Interest
+      <select name="interest">
+        <option value="">Every interest level</option>
+        {% for value, label in interest_options %}
+          <option value="{{ value.value }}" {% if selected_interest == value.value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <button class="button button-secondary" type="submit">Apply filters</button>
+    {% if ownership != "all" or selected_interest %}<a class="clear-link" href="/catalog">Clear</a>{% endif %}
+  </form>
+
+  {% if records %}
+    <section class="catalog-grid" aria-label="Catalog records">
+      {% for record in records %}
+        <a class="record-card" href="/catalog/{{ record.record_id }}">
+          <div class="record-visual">
+            {% if record.record_id in covers %}
+              <img src="/catalog/{{ record.record_id }}/cover" alt="{{ record.preferred_name }}" loading="lazy" width="900" height="900">
+            {% else %}
+              <span aria-hidden="true">{{ record.preferred_name[:1] | upper }}</span>
+            {% endif %}
+          </div>
+          <div class="record-content">
+            <div class="record-heading">
+              <h2>{{ record.preferred_name }}</h2>
+              {% if record.owned %}<span class="owned-mark">Owned</span>{% endif %}
+            </div>
+            <p>{{ record.distinguishing_details or "Details can be added when I learn more." }}</p>
+            <div class="record-meta">
+              {% if not record.owned %}<span class="interest interest-{{ record.interest_level.value }}">{{ interest_labels[record.interest_level] }}</span>{% endif %}
+              {% if record.linked_identity_id %}<code>{{ record.linked_identity_id }}</code>{% endif %}
+            </div>
+          </div>
+        </a>
+      {% endfor %}
+    </section>
+  {% else %}
+    <section class="empty-state">
+      <div class="empty-mark" aria-hidden="true">U</div>
+      <h2>No dolls here yet</h2>
+      {% if total_count %}
+        <p>No records match these filters.</p>
+        <a class="button button-secondary" href="/catalog">Show the full catalog</a>
+      {% else %}
+        <p>Add the first doll to begin the personal catalog.</p>
+        <a class="button" href="/catalog/new">Add my first doll</a>
+      {% endif %}
+    </section>
+  {% endif %}
+{% endblock %}

@@ -2,6 +2,17 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Import Owned Catalog and Covers",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/import_owned_catalog.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "USAGI_CATALOG_DB": "${workspaceFolder}/private/catalog.sqlite3"
+      }
+    },
+    {
       "name": "Run Personal Catalog API",
       "type": "debugpy",
       "request": "launch",

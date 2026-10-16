@@ -4,10 +4,11 @@ import os
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import Annotated
 
-from fastapi import Depends, FastAPI, HTTPException, Request, status
+from fastapi import FastAPI, HTTPException, status
 
+from usagi_visual_identifier.api.dependencies import CatalogRepositoryDependency
+from usagi_visual_identifier.api.web import register_web_routes
 from usagi_visual_identifier.catalog.database import CatalogDatabase
 from usagi_visual_identifier.catalog.models import (
     CatalogRecord,
@@ -17,7 +18,6 @@ from usagi_visual_identifier.catalog.models import (
 from usagi_visual_identifier.catalog.repository import (
     CatalogConflictError,
     CatalogRecordNotFoundError,
-    CatalogRepository,
 )
 
 DEFAULT_DATABASE_PATH = Path("private/catalog.sqlite3")
@@ -45,11 +45,7 @@ def create_app(*, database_path: Path | None = None) -> FastAPI:
     )
     app.state.catalog_database = database
 
-    def repository(request: Request) -> CatalogRepository:
-        stored = request.app.state.catalog_database
-        if not isinstance(stored, CatalogDatabase):
-            raise RuntimeError("catalog database is not configured")
-        return CatalogRepository(stored)
+    register_web_routes(app=app)
 
     @app.get("/api/health")
     def health() -> dict[str, str]:
@@ -58,7 +54,7 @@ def create_app(*, database_path: Path | None = None) -> FastAPI:
 
     @app.get("/api/catalog", response_model=list[CatalogRecord])
     def list_catalog(
-        catalog: Annotated[CatalogRepository, Depends(repository)],
+        catalog: CatalogRepositoryDependency,
     ) -> tuple[CatalogRecord, ...]:
         """List the complete private personal catalog."""
         return catalog.list_records()
@@ -70,7 +66,7 @@ def create_app(*, database_path: Path | None = None) -> FastAPI:
     )
     def create_catalog_record(
         value: CatalogRecordCreate,
-        catalog: Annotated[CatalogRepository, Depends(repository)],
+        catalog: CatalogRepositoryDependency,
     ) -> CatalogRecord:
         """Create a manually entered personal catalog record."""
         try:
@@ -81,7 +77,7 @@ def create_app(*, database_path: Path | None = None) -> FastAPI:
     @app.get("/api/catalog/{record_id}", response_model=CatalogRecord)
     def get_catalog_record(
         record_id: str,
-        catalog: Annotated[CatalogRepository, Depends(repository)],
+        catalog: CatalogRepositoryDependency,
     ) -> CatalogRecord:
         """Return one personal catalog record."""
         try:
@@ -95,7 +91,7 @@ def create_app(*, database_path: Path | None = None) -> FastAPI:
     def update_catalog_record(
         record_id: str,
         changes: CatalogRecordUpdate,
-        catalog: Annotated[CatalogRepository, Depends(repository)],
+        catalog: CatalogRepositoryDependency,
     ) -> CatalogRecord:
         """Apply a validated partial change without destructive deletion."""
         try:

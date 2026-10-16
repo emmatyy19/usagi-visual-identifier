@@ -207,6 +207,7 @@ independent unknown final test.
 - [ ] Add source link and availability operations on top of the initial schema
 - [x] Link photographed identities to personal catalog records without requiring a complete official catalog
 - [x] Add a typed repository and local HTTP API for catalog records
+- [x] Build a responsive browser interface for browsing, filtering, creating, and editing catalog records
 - [ ] Build a private local web interface for uploading one cropped doll photograph
 - [ ] Connect uploads to the selected retrieval model and frozen uncertainty rule
 - [ ] Display top matches, reference evidence, and calibrated uncertainty wording
