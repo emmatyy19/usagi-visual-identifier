@@ -93,7 +93,7 @@ headwear, props, embroidery, and tags remain recognizable in every variant.
 The photo files and model artifacts remain ignored by Git. On the Mac, run:
 
 ```bash
-cd /Users/emmatong/Projects/usagi-visual-identifier
+cd /path/to/usagi-visual-identifier
 git switch main
 git pull --ff-only
 uv sync --all-groups

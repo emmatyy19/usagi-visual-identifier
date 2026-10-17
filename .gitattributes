@@ -1,0 +1,2 @@
+# Keep authored notebooks visible without counting their embedded output bytes.
+*.ipynb linguist-detectable=false
