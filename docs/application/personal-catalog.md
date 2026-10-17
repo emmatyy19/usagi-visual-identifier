@@ -25,7 +25,7 @@ operations will be added in a later application slice.
 The interest level is one of `unknown`, `not_interested`, `nice_to_have`,
 `would_buy`, or `actively_looking`. Named levels keep the meaning clearer than
 a numeric rating while still supporting useful wish list sorting. Ownership is
-separate because I may already own a doll and still want another copy.
+stored separately, but the interface only shows interest for dolls I do not own.
 
 ## Local data
 
@@ -105,9 +105,39 @@ edits. The photos are resized with their orientation corrected and metadata remo
 The database and cover images stay inside the ignored private directory, outside Git.
 This does not change the training data or model labels.
 
-## Next application slice
+## Identify a photo
 
-The next slice will add a one image upload endpoint and an application service
-that converts the selected retrieval model output into the three documented
-result states. The browser will show top matches and reference evidence before
-any catalog change is saved.
+Open `/identify` or choose `Identify a doll` in the navigation. Upload one cropped
+doll photo as JPEG, PNG, WebP, or HEIC, up to 10 MB and 32 megapixels. The server
+corrects orientation, removes metadata, and uses a temporary lossless image.
+Query files are deleted when the request finishes, including failed requests.
+
+The first application version uses frozen DINOv2 Small with nearest image
+retrieval. It tied tuned retrieval on final Top 1 accuracy and avoids loading a
+separate training checkpoint. It searches only the training gallery and uses the
+unchanged `frozen_max_similarity` operating point in
+`configs/open_set/final_known_test.json`.
+
+The page returns `Possible match` above the threshold or `No confident local
+match` below it. Both show the closest alternatives with their actual training
+reference images. Similarity is not a probability. There is no new threshold or
+automatic confirmed state. I compare the details and open the relevant catalog
+record myself. Saving a confirmation history remains future work.
+
+The same service is available at `POST /api/identify` with a multipart `photo`
+field. Responses include model revision, gallery hash, dataset fingerprint,
+threshold, identity scores, reference IDs, current linked catalog record IDs,
+and inference timing. Catalog labels are read at request time and are not saved
+as a historical snapshot. No query history or training examples are created.
+
+Run from the repository root, or set `USAGI_PROJECT_ROOT`. Identification needs
+the existing frozen embedding artifact in
+`artifacts/embeddings/facebook_dinov2-small`, its metadata, the prepared training
+photos under `data/processed`, and the pinned DINOv2 model. The model loads only
+on first identification and is reused. If not cached, the model loader may
+download model files from Hugging Face; query images are never sent there.
+Set `HF_HUB_OFFLINE=1` to require cached model files. `USAGI_DEVICE` selects
+`auto`, `mps`, `cuda`, or `cpu`. Browsing still works without the model artifacts.
+
+Keep the server bound to localhost. Authentication, remote hosting, durable
+confirmation history, and glasses integration are not part of this slice.

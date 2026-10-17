@@ -181,6 +181,18 @@ button:focus-visible, a:focus-visible { outline: 3px solid #a49b83; outline-offs
 .check-choice { align-items: start; padding: 20px; gap: 14px; }
 .check-choice input { flex: 0 0 18px; min-height: 18px; padding: 0; }
 .form-actions { padding-top: 16px; gap: 16px; }
+.upload-form { display: grid; gap: 20px; max-width: 840px; }
+.upload-form .button { justify-self: start; }
+.upload-note { margin: 0; color: var(--muted); line-height: 1.6; }
+.upload-form input[type="file"] { min-width: 0; font-size: 14px; }
+.upload-form input::file-selector-button { margin-right: 16px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--cream); color: var(--ink); cursor: pointer; }
+.result-provenance { margin-top: 24px; overflow-wrap: anywhere; }
+.result-provenance summary { cursor: pointer; padding: 8px 0; }
+.site-header nav > a.identify-link { display: inline-flex; }
+@media (max-width: 600px) {
+  .site-header { flex-wrap: wrap; padding: 16px 0; }
+  .site-header nav { flex-wrap: wrap; gap: 16px; }
+}
 @media (max-width: 960px) {
   .catalog-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
 }
