@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% set page_title = "Identify a doll" %}
+{% block content %}
+<section class="page-heading">
+  <p class="eyebrow">Photo identification</p>
+  <h1>Who is this Usagi?</h1>
+  <p>Choose a photo with one doll. Crop out other dolls before uploading.</p>
+</section>
+<form class="form-section upload-form" action="/identify" method="post" enctype="multipart/form-data">
+  <label class="field">Doll photo
+    <input type="file" name="photo" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" required>
+    <small>JPEG, PNG, WebP, or HEIC. Up to 10 MB and 32 megapixels.</small>
+  </label>
+  <button class="button" type="submit">Find possible matches</button>
+  <p class="upload-note">The photo is processed locally and deleted after the request. The first search may take longer while the model loads.</p>
+</form>
+{% if error %}<div class="error-message" role="alert">{{ error }}</div>{% endif %}
+{% if result %}
+<section class="form-section" aria-label="Identification result">
+  <h2>{% if result.state == 'possible_match' %}Possible match: {{ result.matches[0].name }}{% else %}No confident local match{% endif %}</h2>
+  <p>{% if result.state == 'possible_match' %}This suggestion passed the saved similarity threshold. Compare the details before choosing a catalog record.{% else %}The best similarity was below the saved threshold. These are the closest alternatives, not confirmed identities. The doll may be missing from the gallery, or the photo may be difficult to recognize.{% endif %}</p>
+  <p>Similarity is not a probability. Rejection of new Usagi variants has not been independently verified.</p>
+</section>
+<section class="catalog-grid" aria-label="Possible matches">
+{% for match in result.matches %}
+  <article class="record-card">
+    <div class="record-visual"><img src="/identification/references/{{ match.reference_image_id }}" alt="Nearest reference for {{ match.name }}" width="900" height="900"></div>
+    <div class="record-content">
+      <h2>{{ loop.index }}. {{ match.name }}</h2>
+      <p>Cosine similarity: {{ '%.3f'|format(match.score) }}</p>
+      <p>Actual nearest training reference: {{ match.reference_image_id }}</p>
+      {% if match.record_id %}<a class="button button-secondary" href="/catalog/{{ match.record_id }}">Review catalog record</a>{% else %}<p>No linked personal catalog record yet.</p>{% endif %}
+    </div>
+  </article>
+{% endfor %}
+</section>
+<details class="form-section result-provenance">
+  <summary>Model and result details</summary>
+  <p>Frozen DINOv2 Small, nearest image retrieval. Threshold: {{ '%.6f'|format(result.threshold) }}. Prediction time: {{ '%.2f'|format(result.elapsed_seconds) }} seconds.</p>
+  <p>Model revision: <code>{{ result.model_revision }}</code></p>
+  <p>Gallery hash: <code>{{ result.gallery_sha256 }}</code></p>
+  <p>Dataset fingerprint: <code>{{ result.dataset_fingerprint }}</code></p>
+  <p>No catalog changes or training examples were saved.</p>
+</details>
+{% endif %}
+{% endblock %}

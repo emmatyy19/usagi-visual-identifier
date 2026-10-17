@@ -206,8 +206,9 @@ The private catalog application is now underway. It uses a versioned SQLite
 database, typed catalog records, and a local HTTP API. A responsive browser
 interface can browse, filter, create, and edit personal records while keeping
 ownership, interest, verification, and the optional link to a photographed
-identity separate. The next slice will connect a photo upload to the selected
-retrieval model and uncertainty rule.
+identity separate. Photo uploads now connect to frozen nearest image retrieval
+and its existing uncertainty rule, with actual training reference images beside
+the suggestions. Queries do not automatically change the catalog or training data.
 
 I also plan to experiment with my Meta Ray Ban Display glasses through a native
 iPhone companion. The browser and glasses flows will share the same Python

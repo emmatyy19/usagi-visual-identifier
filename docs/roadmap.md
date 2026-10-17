@@ -187,7 +187,7 @@ retraining.
 - [x] Decide against per identity thresholds because each identity has only six validation photographs
 - [x] Measure known acceptance versus unknown false acceptance
 - [x] Test easy negatives and same-character unknowns
-- [ ] Expose uncertainty instead of forcing every query into a known identity
+- [x] Expose uncertainty instead of forcing every query into a known identity
 - [x] Freeze the first operating point before final test evaluation
 - [x] Run the one time final known Session 3 evaluation
 - [ ] Run an independent unknown final test if suitable owner captured images become available
@@ -208,9 +208,9 @@ independent unknown final test.
 - [x] Link photographed identities to personal catalog records without requiring a complete official catalog
 - [x] Add a typed repository and local HTTP API for catalog records
 - [x] Build a responsive browser interface for browsing, filtering, creating, and editing catalog records
-- [ ] Build a private local web interface for uploading one cropped doll photograph
-- [ ] Connect uploads to the selected retrieval model and frozen uncertainty rule
-- [ ] Display top matches, reference evidence, and calibrated uncertainty wording
+- [x] Build a private local web interface for uploading one cropped doll photograph
+- [x] Connect uploads to frozen nearest image retrieval and its existing uncertainty rule
+- [x] Display top matches, reference evidence, and uncertainty wording without claiming probability calibration
 - [ ] Allow manual confirmation and correction without silently creating training data
 - [ ] Preserve model, gallery, threshold, and catalog version provenance
 - [ ] Keep credentials, query history, and personal collection details out of Git
