@@ -2,12 +2,12 @@
   "owner": "Emma",
   "title": "Usagi Shelf",
   "items": [
-    {"id": "usagi-0001", "name": "Matcha ice cream", "details": "A green matcha wrap, a little pink ice cream detail, and a green neck bow.", "cues": ["Matcha wrap", "Pink ice cream", "Green bow"], "photo": "photos/usagi-0001.jpg"},
+    {"id": "usagi-0001", "name": "Matcha ice cream", "details": "Usagi in a green cape, holding matcha soft serve in a waffle cone with red bean paste and mochi balls.", "cues": ["Matcha soft serve", "Waffle cone", "Red bean paste", "Mochi balls", "Green cape"], "photo": "photos/usagi-0001.jpg"},
     {"id": "usagi-0002", "name": "Airport", "details": "A blue uniform and cap, black glasses, and a yellow airplane tucked under one arm.", "cues": ["Blue uniform", "Glasses", "Yellow airplane"], "photo": "photos/usagi-0002.jpg"},
-    {"id": "usagi-0003", "name": "Bakery", "details": "A gray baker cap, a pink scarf, and a brown bakery apron.", "cues": ["Baker cap", "Pink scarf", "Bakery apron"], "photo": "photos/usagi-0003.jpg"},
-    {"id": "usagi-0004", "name": "Magical", "details": "Yellow bows, a white ruffled dress, and a flower wand. A very dressed up Usagi.", "cues": ["Yellow bows", "Ruffled dress", "Flower wand"], "photo": "photos/usagi-0004.jpg"},
+    {"id": "usagi-0003", "name": "Bakery", "details": "A brown cap and matching brown apron over a pink collared shirt, with tongs in hand.", "cues": ["Brown cap", "Brown apron", "Pink collared shirt", "Tongs"], "photo": "photos/usagi-0003.jpg"},
+    {"id": "usagi-0004", "name": "Magical", "details": "Yellow bows, a white ruffled dress, and a flower wand.", "cues": ["Yellow bows", "Ruffled dress", "Flower wand"], "photo": "photos/usagi-0004.jpg"},
     {"id": "usagi-0005", "name": "Pompompurin", "details": "A yellow dog costume with a brown beret and floppy ears.", "cues": ["Dog costume", "Brown beret", "Floppy ears"], "photo": "photos/usagi-0005.jpg"},
-    {"id": "usagi-0006", "name": "Chiikawa Park fluffy", "details": "A round, fluffy body and an orange hair tie, with no outfit to hide behind.", "cues": ["Fluffy body", "Orange hair tie", "No outfit"], "photo": "photos/usagi-0006.jpg"},
-    {"id": "usagi-0007", "name": "Lobster claws", "details": "Red lobster claws and an orange tail. The claws make this one easy to spot.", "cues": ["Lobster claws", "Orange tail"], "photo": "photos/usagi-0007.jpg"}
+    {"id": "usagi-0006", "name": "Chiikawa Park fluffy", "details": "A round, fluffy Usagi with an orange plastic hook.", "cues": ["Fluffy body", "Orange plastic hook"], "photo": "photos/usagi-0006.jpg"},
+    {"id": "usagi-0007", "name": "Lobster claws", "details": "Usagi wearing a red lobster claw headband in place of ears.", "cues": ["Lobster claw headband"], "photo": "photos/usagi-0007.jpg"}
   ]
 }

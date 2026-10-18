@@ -22,7 +22,7 @@ function showDetails(item) {
   dialog.showModal();
 }
 
-function card(item, index) {
+function card(item) {
   const button = document.createElement('button');
   button.type = 'button';
   button.className = 'doll-card';
@@ -38,9 +38,6 @@ function card(item, index) {
   photo.append(image);
   const content = document.createElement('div');
   content.className = 'card-copy';
-  const number = document.createElement('span');
-  number.className = 'card-number';
-  number.textContent = 'On my shelf · ' + String(index + 1).padStart(2, '0');
   const title = document.createElement('h3');
   title.textContent = item.name;
   const details = document.createElement('p');
@@ -52,7 +49,7 @@ function card(item, index) {
   arrow.textContent = '↗';
   arrow.setAttribute('aria-hidden', 'true');
   link.append(arrow);
-  content.append(number, title, details, link);
+  content.append(title, details, link);
   button.append(photo, content);
   button.addEventListener('click', () => showDetails(item));
   return button;
@@ -62,7 +59,7 @@ function render() {
   const query = search.value.trim().toLocaleLowerCase();
   const visible = items.filter(item => [item.name, item.details, ...item.cues].join(' ').toLocaleLowerCase().includes(query));
   if (sort.value === 'name') visible.sort((a, b) => a.name.localeCompare(b.name));
-  shelf.replaceChildren(...visible.map(item => card(item, items.indexOf(item))));
+  shelf.replaceChildren(...visible.map(card));
   count.textContent = `${visible.length} of ${items.length} dolls${query ? ' match your search' : ' on the shelf'}`;
   empty.hidden = visible.length !== 0;
   clear.hidden = !query;
@@ -87,7 +84,7 @@ dialog.addEventListener('click', event => {
 });
 
 try {
-  const response = await fetch('./collection.json');
+  const response = await fetch('./collection.json', { cache: 'no-cache' });
   if (!response.ok) throw new Error('Collection unavailable');
   const collection = await response.json();
   items = collection.items;
