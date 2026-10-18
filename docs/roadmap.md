@@ -6,6 +6,11 @@ belong in the Git-ignored `private/` directory.
 
 ## Current position
 
+The [implementation status](application/implementation-status.md) separates
+available app features from planned work. The [app showcase](showcase/README.md)
+shows the current interface, and [publication preparation](publication-readiness.md)
+records the review required before a repository visibility change.
+
 The repository contains seven catalog identities, 98 prepared Session 1
 training photographs, 42 prepared Session 2 validation photographs, and a
 reproducible frozen DINOv2 retrieval baseline. All four aggregation rules
