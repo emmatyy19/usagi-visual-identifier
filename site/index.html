@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#faf8f5">
+  <meta name="description" content="A little look around Emma's Chiikawa Usagi collection, and the computer vision project it inspired.">
+  <title>Usagi Shelf · Emma's collection</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./app.js" type="module"></script>
+</head>
+<body>
+  <a class="skip-link" href="#collection">Skip to the collection</a>
+  <header class="site-header">
+    <a class="brand" href="./" aria-label="Usagi Shelf home"><span class="brand-mark" aria-hidden="true">🐰</span><span><strong>Usagi Shelf</strong><small>Emma's little collection</small></span></a>
+    <nav aria-label="Main navigation"><a href="#collection">The shelf</a><a href="#story">The story</a><a class="project-link" href="https://github.com/emmatyy19/usagi-visual-identifier">View the project <span aria-hidden="true">↗</span></a></nav>
+  </header>
+  <main>
+    <section class="hero" aria-labelledby="welcome">
+      <div class="hero-copy"><p class="eyebrow">A small collection, a lot of Usagi</p><h1 id="welcome">Welcome to<br>my Usagi shelf<span class="title-dot">.</span></h1><p>Some people have a whole wall. I have a handful I love and was lucky enough to find. Come have a look around.</p><a class="button" href="#collection">Meet the dolls <span aria-hidden="true">↓</span></a><span class="hero-note">My own dolls. My own photos.</span></div>
+      <div class="hero-photo"><span class="photo-caption">A little magic for the shelf</span><img src="./photos/usagi-0004.jpg" alt="My Magical Usagi doll wearing yellow bows and a white ruffled dress" width="675" height="900" fetchpriority="high"><span class="photo-stamp" aria-hidden="true">♡</span></div>
+    </section>
+    <section class="collection" id="collection" aria-labelledby="collection-heading">
+      <div class="section-intro"><div><p class="eyebrow">The collection</p><h2 id="collection-heading">A few familiar faces</h2></div><p id="collection-count">Seven dolls, each with a little something different.</p></div>
+      <form class="toolbar" role="search" onsubmit="return false">
+        <label class="search-field"><span>Find a doll</span><input id="search" type="search" placeholder="Try Magical, a bow, or a baker cap" autocomplete="off"></label>
+        <label class="sort-field"><span>Arrange the shelf</span><select id="sort"><option value="collection">Collection order</option><option value="name">Name, A to Z</option></select></label>
+        <button type="button" class="clear-button" id="clear" hidden>Clear search</button>
+      </form>
+      <p class="result-count" id="result-count" role="status" aria-live="polite"></p>
+      <div class="shelf" id="shelf" aria-label="Dolls in my collection"></div>
+      <div class="empty-state" id="empty" hidden><span aria-hidden="true">☁</span><h3>No dolls on this part of the shelf</h3><p>Try another name or a detail like a hat, bow, or costume.</p><button type="button" class="button" id="show-all">Show all dolls</button></div>
+      <p id="load-error" class="load-error" role="alert" hidden>The shelf could not load. Please refresh and try again.</p>
+      <noscript><p>Enable JavaScript to browse the collection. You can still read the project story below and <a href="https://github.com/emmatyy19/usagi-visual-identifier">visit the repository</a>.</p></noscript>
+    </section>
+    <section class="story" id="story" aria-labelledby="story-heading"><div><p class="eyebrow">How this became a project</p><h2 id="story-heading">Could a photo tell<br>these Usagi apart?</h2></div><div class="story-copy"><p>I wanted to learn computer vision, but my master's schedule had no room for the course. My dolls gave me an idea: many share the same face, so could a model learn to notice the small things that make each one different?</p><p>I photographed seven dolls across separate sessions, tried image retrieval, trained a classifier, and fine tuned a vision model on my RTX 3060. The simplest retrieval baseline still tied the tuned model on the final known photo test.</p><p>This page is a look at my real collection. The local app also identifies uploaded photos and shows its closest references. You can explore the code, results, and visual notebooks in the project.</p><a class="text-link" href="https://github.com/emmatyy19/usagi-visual-identifier#what-the-experiments-taught-me">Read the experiments <span aria-hidden="true">↗</span></a></div></section>
+    <aside class="collection-note"><span aria-hidden="true">✿</span><p>These are my informal names for dolls I own. This is a personal fan collection, with no official affiliation. Character and merchandise rights belong to their respective holders.</p></aside>
+  </main>
+  <footer><span>Made with curiosity, and a fondness for Usagi.</span><a href="https://github.com/emmatyy19/usagi-visual-identifier/blob/main/NOTICE.md">Photos © 2026 Emma Tong</a></footer>
+  <dialog id="doll-dialog" aria-labelledby="doll-name"><div class="dialog-content"><button class="dialog-close" type="button" aria-label="Close doll details">×</button><div class="dialog-photo"><img id="doll-photo" alt="" width="675" height="900"></div><div class="dialog-copy"><p class="eyebrow">On my shelf</p><h2 id="doll-name"></h2><span class="owned-badge">In my collection</span><p id="doll-description"></p><h3>The little details</h3><ul class="cue-list" id="doll-cues"></ul><p class="photo-note">Photographed by me during my first collection photo session. The name is my informal label.</p><a class="text-link" href="https://github.com/emmatyy19/usagi-visual-identifier">Explore the vision project <span aria-hidden="true">↗</span></a></div></div></dialog>
+</body>
+</html>

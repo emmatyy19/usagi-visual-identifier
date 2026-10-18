@@ -9,6 +9,12 @@ and compare likely matches with the reference photos that support them.
 This is an educational fan project, not an official merchandise catalog or a
 public identification service. The current gallery contains seven identities.
 
+A public collection viewer is prepared for GitHub Pages. It uses seven real,
+reviewed cover photos from my collection, with search and larger doll details.
+Preview it at `http://127.0.0.1:8766` with
+`uv run python scripts/preview_public_shelf.py`.
+See the [Pages guide](docs/application/public-collection.md) for publication.
+
 ## Why I am building this
 
 My master's schedule will not leave room for a formal computer vision course.
@@ -121,7 +127,8 @@ prepared dataset, embeddings, and model checkpoints are not distributed.
 Browsing and manually adding records work without them. Identification needs
 the local gallery artifacts and pinned DINOv2 model described in the
 [application guide](docs/application/personal-catalog.md). There is no bundled
-seven doll demo dataset or hosted demo.
+training gallery or hosted identification service. The separate public shelf
+includes only seven reviewed cover photos and their display descriptions.
 
 The committed notebooks contain executed results and reviewed photo renderings
 for reading. Rerunning the full experiments requires excluded local data and
@@ -142,6 +149,7 @@ hosting setup.
 | Final known evaluation | Completed; not reused for selection |
 | Unknown rejection | Validation only; independent unknown test deferred |
 | SQLite catalog and browser create, read, and update | Implemented; no deletion |
+| Public collection viewer | Implemented; Pages deployment prepared |
 | Photo upload, retrieval API, reference evidence | Implemented |
 | Saved identification confirmation and correction history | Planned |
 | Source links and availability operations | Planned; initial source link schema exists |
@@ -196,7 +204,7 @@ own collection. Original photo files, standalone prepared data, private notes,
 credentials, embeddings, and model files remain outside Git.
 
 Source code and written documentation are available under the [MIT License](LICENSE).
-Photographs embedded in notebooks or screenshots are excluded from that grant
+Photographs in notebooks, screenshots, or the public shelf are excluded from that grant
 and remain © 2026 Emma Tong, all rights reserved. Character and merchandise
 rights remain with their respective holders. Dependencies and pretrained models
 retain their own licenses. See [media and third party notices](NOTICE.md).

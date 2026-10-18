@@ -213,6 +213,7 @@ independent unknown final test.
 - [x] Link photographed identities to personal catalog records without requiring a complete official catalog
 - [x] Add a typed repository and local HTTP API for catalog records
 - [x] Build a responsive browser interface for browsing, filtering, creating, and editing catalog records
+- [x] Prepare a public collection viewer with reviewed owned doll photos and a GitHub Pages workflow
 - [x] Build a private local web interface for uploading one cropped doll photograph
 - [x] Connect uploads to frozen nearest image retrieval and its existing uncertainty rule
 - [x] Display top matches, reference evidence, and uncertainty wording without claiming probability calibration

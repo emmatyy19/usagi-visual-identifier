@@ -4,7 +4,8 @@ The MIT license in `LICENSE` covers the source code and written documentation
 authored for this project. It does not grant rights to third party characters,
 merchandise designs, model weights, or dependency code.
 
-Photographs taken by Emma Tong and embedded in notebooks or app screenshots
+Photographs taken by Emma Tong and displayed in notebooks, app screenshots,
+or the public collection site
 are © 2026 Emma Tong, all rights reserved, and are excluded from the MIT grant.
 Displaying those photographs here is not an offer of a reusable image dataset.
 This notice does not claim ownership of the characters or merchandise shown.
