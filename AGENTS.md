@@ -23,6 +23,9 @@ matches to structured catalog metadata.
   experiment artifacts.
 - Only commit images whose redistribution rights are understood. Prefer tiny
   invented fixtures for automated tests.
+- `site/` contains the owner approved public collection snapshot and resized
+  cover photos. Publish only explicitly reviewed fields and images; never export
+  private database records or notes automatically into the site.
 
 ## Writing style
 

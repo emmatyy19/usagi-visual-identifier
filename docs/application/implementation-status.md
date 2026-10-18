@@ -12,6 +12,7 @@ was merged in PR 17. This page describes working behavior, not future intent.
 | Evaluation | Final known Session 3 evaluation and unknown validation | No independent unknown final test |
 | Catalog | SQLite migrations and typed create, read, and update API | No delete operation |
 | Shelf | Responsive browse, filter, create, and edit pages | No hosted service or authentication |
+| Public viewer | Seven published photos, search, sorting, and doll details | Static collection only; Pages workflow prepared |
 | Covers | Repeatable import from first Session 1 photos | Import requires local collection files |
 | Identification | Browser upload and shared JSON API | One cropped doll per photo |
 | Evidence | Top three identities, nearest training references, catalog links | Suggestions need human review |
