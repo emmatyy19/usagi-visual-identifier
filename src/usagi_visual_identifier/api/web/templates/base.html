@@ -7,8 +7,14 @@
     <title>{{ page_title or "Usagi Shelf" }}</title>
     <link rel="icon" href="{{ url_for('static', path='/favicon.svg') }}" type="image/svg+xml">
     <link rel="stylesheet" href="{{ url_for('static', path='/catalog.css') }}">
+    <script src="{{ url_for('static', path='/loading.js') }}" defer></script>
   </head>
   <body>
+    <div class="page-progress" aria-hidden="true" hidden></div>
+    <div class="loading-status" role="status" aria-live="polite" aria-atomic="true" hidden>
+      <span class="loading-spinner" aria-hidden="true"></span>
+      <span class="loading-message"></span>
+    </div>
     <header class="site-header">
       <a class="brand" href="/catalog" aria-label="Usagi Shelf home">
         <span class="brand-mark" aria-hidden="true">🐰</span>

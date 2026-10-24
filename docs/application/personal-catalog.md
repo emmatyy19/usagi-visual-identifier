@@ -122,13 +122,31 @@ The page returns `Possible match` above the threshold or `No confident local
 match` below it. Both show the closest alternatives with their actual training
 reference images. Similarity is not a probability. There is no new threshold or
 automatic confirmed state. I compare the details and open the relevant catalog
-record myself. Saving a confirmation history remains future work.
+record myself. Each linked suggestion has a `That's the one` button. I can also
+choose any other catalog doll or mark the photo unknown. A saved receipt shows
+my choice and links to the selected record, or to manual catalog entry for an
+unknown doll. These actions do not change ownership or other catalog fields.
 
 The same service is available at `POST /api/identify` with a multipart `photo`
 field. Responses include model revision, gallery hash, dataset fingerprint,
 threshold, identity scores, reference IDs, current linked catalog record IDs,
-and inference timing. Catalog labels are read at request time and are not saved
-as a historical snapshot. No query history or training examples are created.
+and inference timing. Each response also includes a random query ID. Evidence
+waits in memory for up to one hour, with a limit of 100 pending queries. Restarting
+the server clears unsaved results. This local workflow uses one server process.
+
+Only an explicit decision writes to the private SQLite `identification_reviews`
+table. The saved evidence includes the original response, candidate catalog
+snapshots, the selected record snapshot, and a timestamp. Snapshots contain
+names, identity links, distinguishing details, and record update timestamps;
+they exclude personal notes. Confirmed means I chose the first suggestion,
+corrected means I chose another record, and unknown means I did not identify it.
+These labels describe my decision, not new evidence of model accuracy.
+
+Repeated submissions of the same choice return the existing receipt. A different
+choice for an already saved query is rejected; a new identification starts a new
+decision. Photos are deleted after inference, and no training examples are
+created. Saved receipts survive restarts and can be revisited through their URL.
+There is no history browsing screen yet.
 
 Run from the repository root, or set `USAGI_PROJECT_ROOT`. Identification needs
 the existing frozen embedding artifact in
@@ -139,5 +157,5 @@ download model files from Hugging Face; query images are never sent there.
 Set `HF_HUB_OFFLINE=1` to require cached model files. `USAGI_DEVICE` selects
 `auto`, `mps`, `cuda`, or `cpu`. Browsing still works without the model artifacts.
 
-Keep the server bound to localhost. Authentication, remote hosting, durable
-confirmation history, and glasses integration are not part of this slice.
+Keep the server bound to localhost. Authentication, remote hosting, and glasses
+integration are not part of this slice.

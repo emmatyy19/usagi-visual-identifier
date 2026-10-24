@@ -217,9 +217,9 @@ independent unknown final test.
 - [x] Build a private local web interface for uploading one cropped doll photograph
 - [x] Connect uploads to frozen nearest image retrieval and its existing uncertainty rule
 - [x] Display top matches, reference evidence, and uncertainty wording without claiming probability calibration
-- [ ] Allow manual confirmation and correction without silently creating training data
-- [ ] Preserve model, gallery, threshold, and catalog version provenance
-- [ ] Keep credentials, query history, and personal collection details out of Git
+- [x] Allow manual confirmation and correction without silently creating training data
+- [x] Preserve model, gallery, threshold, and catalog version provenance
+- [x] Keep credentials, query history, and personal collection details out of Git
 
 ### Exit criteria
 

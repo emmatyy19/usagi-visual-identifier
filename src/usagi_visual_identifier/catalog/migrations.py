@@ -64,4 +64,17 @@ MIGRATIONS = (
             """,
         ),
     ),
+    Migration(
+        version=2,
+        name="create_identification_reviews",
+        statements=(
+            """
+            CREATE TABLE identification_reviews (
+                query_id TEXT PRIMARY KEY,
+                review_json TEXT NOT NULL,
+                created_at TEXT NOT NULL
+            )
+            """,
+        ),
+    ),
 )

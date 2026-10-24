@@ -119,6 +119,17 @@ input:focus, select:focus, textarea:focus { border-color: var(--yellow-dark); ou
 }
 
 /* Shared spacing and soft collection palette. */
+.page-progress { position: fixed; inset: 0 0 auto; height: 3px; background: #eee2ba; z-index: 100; overflow: hidden; }
+.page-progress::after { content: ""; display: block; width: 35%; height: 100%; background: #a49b83; animation: page-progress 1.4s ease-in-out infinite; }
+.loading-status { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 100; display: flex; align-items: center; gap: 12px; width: max-content; max-width: calc(100% - 32px); padding: 16px 20px; border: 1px solid var(--border); border-radius: 16px; background: #fffdfa; box-shadow: 0 4px 24px rgb(78 60 35 / 12%); font-size: .9rem; line-height: 1.5; }
+.loading-status[hidden], .page-progress[hidden] { display: none; }
+.loading-spinner { flex-shrink: 0; width: 18px; height: 18px; border: 2px solid #e9e3dc; border-top-color: #786640; border-radius: 50%; animation: loading-spin .8s linear infinite; }
+.button[aria-disabled="true"] { opacity: .7; cursor: wait; }
+@keyframes loading-spin { to { transform: rotate(360deg); } }
+@keyframes page-progress { from { transform: translateX(-100%); } to { transform: translateX(390%); } }
+@media (prefers-reduced-motion: reduce) {
+  .loading-spinner, .page-progress::after { animation: none; }
+}
 :root {
   --ink: #453f3d;
   --muted: #776d69;
@@ -188,6 +199,20 @@ button:focus-visible, a:focus-visible { outline: 3px solid #a49b83; outline-offs
 .upload-form input::file-selector-button { margin-right: 16px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--cream); color: var(--ink); cursor: pointer; }
 .result-provenance { margin-top: 24px; overflow-wrap: anywhere; }
 .result-provenance summary { cursor: pointer; padding: 8px 0; }
+.result-provenance pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+.match-content { gap: 16px; }
+.match-content > h2, .match-content > p { margin: 0; min-height: 0; }
+.match-content > form { margin-top: auto; padding-top: 8px; }
+.review-record-link { align-self: flex-start; line-height: 1.5; padding-block: 4px; }
+.review-choices { margin-top: 24px; display: grid; gap: 24px; }
+.review-choices > h2, .review-choices > p { margin: 0; }
+.review-choices > p, .review-receipt p { line-height: 1.65; }
+.review-choices form { display: flex; align-items: end; gap: 16px; flex-wrap: wrap; margin: 0; }
+.review-choices .field { flex: 1; min-width: min(240px, 100%); }
+.review-receipt { display: grid; gap: 24px; }
+.review-receipt p, .review-summary h2 { margin: 0; }
+.review-summary { display: grid; gap: 12px; }
+.review-actions { display: flex; flex-wrap: wrap; gap: 16px; padding-top: 8px; }
 .site-header nav > a.identify-link { display: inline-flex; }
 @media (max-width: 600px) {
   .site-header { flex-wrap: wrap; padding: 16px 0; }

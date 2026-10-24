@@ -6,7 +6,7 @@
   <h1>Who is this Usagi?</h1>
   <p>Choose a photo with one doll. Crop out other dolls before uploading.</p>
 </section>
-<form class="form-section upload-form" action="/identify" method="post" enctype="multipart/form-data">
+<form class="form-section upload-form" action="/identify" method="post" enctype="multipart/form-data" data-loading-message="Finding possible matches…" data-loading-detail="Still finding matches. The first search can take longer while the model loads." data-loading-button="Finding matches…">
   <label class="field">Doll photo
     <input type="file" name="photo" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" required>
     <small>JPEG, PNG, WebP, or HEIC. Up to 10 MB and 32 megapixels.</small>
@@ -25,14 +25,37 @@
 {% for match in result.matches %}
   <article class="record-card">
     <div class="record-visual"><img src="/identification/references/{{ match.reference_image_id }}" alt="Nearest reference for {{ match.name }}" width="900" height="900"></div>
-    <div class="record-content">
+    <div class="record-content match-content">
       <h2>{{ loop.index }}. {{ match.name }}</h2>
       <p>Cosine similarity: {{ '%.3f'|format(match.score) }}</p>
       <p>Actual nearest training reference: {{ match.reference_image_id }}</p>
-      {% if match.record_id %}<a class="button button-secondary" href="/catalog/{{ match.record_id }}">Review catalog record</a>{% else %}<p>No linked personal catalog record yet.</p>{% endif %}
+      {% if match.record_id %}
+      <form method="post" action="/identify/{{ result.query_id }}/review" data-loading-message="Saving your decision…">
+        <input type="hidden" name="choice" value="{{ match.record_id }}">
+        <button class="button" type="submit">That's the one</button>
+      </form>
+      <a class="review-record-link" href="/catalog/{{ match.record_id }}">Review catalog record</a>
+      {% else %}<p>No linked personal catalog record yet.</p>{% endif %}
     </div>
   </article>
 {% endfor %}
+</section>
+<section class="form-section review-choices" aria-label="Other choices">
+  <h2>Not one of these?</h2>
+  <form method="post" action="/identify/{{ result.query_id }}/review" data-loading-message="Saving your decision…">
+    <label class="field">Choose another doll from my catalog
+      <select name="choice" required>
+        <option value="">Choose a doll</option>
+        {% for record in records %}<option value="{{ record.record_id }}">{{ record.preferred_name }}</option>{% endfor %}
+      </select>
+    </label>
+    <button class="button button-secondary" type="submit">Save my choice</button>
+  </form>
+  <form method="post" action="/identify/{{ result.query_id }}/review" data-loading-message="Saving your decision…">
+    <input type="hidden" name="choice" value="unknown">
+    <button class="button button-secondary" type="submit">I don't recognize this doll</button>
+  </form>
+  <p>Only your choice and the result details are saved locally. The photo is not kept or added to training data. Unsaved results expire after one hour or when the server restarts.</p>
 </section>
 <details class="form-section result-provenance">
   <summary>Model and result details</summary>

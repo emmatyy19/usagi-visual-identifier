@@ -5,19 +5,30 @@ import json
 import math
 import os
 import threading
+import time
+from collections import OrderedDict
 from collections.abc import Callable
+from datetime import UTC, datetime
 from io import BytesIO
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Literal, cast
+from typing import Annotated, Literal, cast
+from uuid import uuid4
 
-from fastapi import FastAPI, HTTPException, Request, UploadFile
-from fastapi.responses import FileResponse, HTMLResponse
+from fastapi import FastAPI, Form, HTTPException, Request, UploadFile
+from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from PIL import Image, ImageOps, UnidentifiedImageError
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
-from usagi_visual_identifier.api.dependencies import CatalogRepositoryDependency
+from usagi_visual_identifier.api.dependencies import (
+    CatalogRepositoryDependency,
+    ReviewRepositoryDependency,
+)
+from usagi_visual_identifier.catalog.reviews import (
+    CatalogSnapshot,
+    IdentificationReview,
+)
 from usagi_visual_identifier.embeddings.artifacts import (
     EmbeddingArtifact,
     EmbeddingError,
@@ -43,7 +54,8 @@ class PhotoMatch(BaseModel):
 class IdentificationResult(BaseModel):
     """Versioned response shared by browser and future companion clients."""
 
-    schema_version: int = 1
+    schema_version: int = 2
+    query_id: str = Field(default_factory=lambda: uuid4().hex)
     state: Literal["possible_match", "no_confident_match"]
     matches: list[PhotoMatch]
     threshold: float
@@ -159,6 +171,10 @@ def register_identification_routes(
     templates = Jinja2Templates(directory=Path(__file__).parent / "web/templates")
     service: IdentificationService | None = None
     initialization_lock = threading.Lock()
+    pending_lock = threading.Lock()
+    pending: OrderedDict[
+        str, tuple[float, IdentificationResult, list[CatalogSnapshot]]
+    ] = OrderedDict()
 
     def get_service() -> IdentificationService:
         nonlocal service
@@ -189,14 +205,27 @@ def register_identification_routes(
                     ) from error
             finally:
                 photo.file.close()
-        records = {
-            record.linked_identity_id: record for record in catalog.list_records()
-        }
+        catalog_records = catalog.list_records()
+        records = {record.linked_identity_id: record for record in catalog_records}
         for match in result.matches:
             record = records.get(match.identity_id)
             if record is not None:
                 match.name = record.preferred_name
                 match.record_id = record.record_id
+        snapshots = [
+            CatalogSnapshot.model_validate(record.model_dump())
+            for record in catalog_records
+        ]
+        # No query pixels are kept. Unreviewed evidence expires after one hour
+        # and the bounded cache holds at most 100 queries in this local process.
+        with pending_lock:
+            now = time.monotonic()
+            expired = [key for key, value in pending.items() if now - value[0] > 3600]
+            for key in expired:
+                del pending[key]
+            pending[result.query_id] = (now, result.model_copy(deep=True), snapshots)
+            while len(pending) > 100:
+                pending.popitem(last=False)
         return result
 
     @app.post("/api/identify", response_model=IdentificationResult)
@@ -228,8 +257,91 @@ def register_identification_routes(
                 status_code=error.status_code,
             )
         return templates.TemplateResponse(
-            request, "identify.html", {"result": result, "error": None}
+            request,
+            "identify.html",
+            {"result": result, "error": None, "records": catalog.list_records()},
         )
+
+    @app.post("/identify/{query_id}/review", response_model=None)
+    def save_review(
+        request: Request,
+        query_id: str,
+        reviews: ReviewRepositoryDependency,
+        choice: Annotated[str, Form()],
+    ) -> RedirectResponse | HTMLResponse:
+        """Save a deliberate choice using server held evidence, never client scores."""
+
+        def failure(message: str, status: int) -> HTMLResponse:
+            return templates.TemplateResponse(
+                request, "identify.html", {"error": message}, status_code=status
+            )
+
+        existing = reviews.get(query_id)
+        if existing is not None:
+            previous = (
+                existing.selected_record.record_id
+                if existing.selected_record
+                else "unknown"
+            )
+            if previous != choice:
+                return failure(
+                    "This photo already has a saved decision. Identify it again to make a new decision.",
+                    409,
+                )
+        else:
+            with pending_lock:
+                evidence = pending.get(query_id)
+            if evidence is None or time.monotonic() - evidence[0] > 3600:
+                return failure(
+                    "This result has expired. Upload the photo again before saving a decision.",
+                    410,
+                )
+            _, result, snapshots = evidence
+            selected = next(
+                (item for item in snapshots if item.record_id == choice), None
+            )
+            if choice != "unknown" and selected is None:
+                return failure(
+                    "Choose a doll from the catalog shown with this result.", 422
+                )
+            review = IdentificationReview(
+                query_id=query_id,
+                decision="unknown"
+                if selected is None
+                else (
+                    "confirmed"
+                    if result.matches[0].record_id == choice
+                    else "corrected"
+                ),
+                selected_record=selected,
+                candidates=[
+                    item
+                    for item in snapshots
+                    if any(
+                        match.record_id == item.record_id for match in result.matches
+                    )
+                ],
+                result=result.model_dump(mode="json"),
+                created_at=datetime.now(UTC),
+            )
+            saved = reviews.save(review)
+            if saved.selected_record != review.selected_record:
+                return failure(
+                    "This photo already has a different saved decision.", 409
+                )
+            with pending_lock:
+                pending.pop(query_id, None)
+        return RedirectResponse(f"/identify/{query_id}/review", status_code=303)
+
+    @app.get("/identify/{query_id}/review", response_class=HTMLResponse)
+    def review_page(
+        request: Request, query_id: str, reviews: ReviewRepositoryDependency
+    ) -> HTMLResponse:
+        """Show a durable receipt that is safe to refresh."""
+        review = reviews.get(query_id)
+        if review is None:
+            raise HTTPException(404, "Saved decision not found.")
+        return templates.TemplateResponse(request, "review.html", {"review": review})
 
     @app.get("/identification/references/{image_id}")
     def reference_image(image_id: str) -> FileResponse:
