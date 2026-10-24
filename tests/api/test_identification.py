@@ -14,11 +14,14 @@ from numpy.typing import NDArray
 from PIL import Image
 
 from usagi_visual_identifier.api import app as app_module
+from usagi_visual_identifier.api import identification as identification_module
 from usagi_visual_identifier.api.identification import (
     IdentificationResult,
     IdentificationService,
     prepare_upload,
 )
+from usagi_visual_identifier.catalog.database import CatalogDatabase
+from usagi_visual_identifier.catalog.reviews import ReviewRepository
 from usagi_visual_identifier.embeddings.artifacts import EmbeddingArtifact
 from usagi_visual_identifier.embeddings.inference import FrozenRetrievalPredictor
 
@@ -222,3 +225,95 @@ def test_inference_failure_cleans_up_query(
         assert "private backend detail" not in response.text
         assert observed and not observed[0].exists()
         assert not observed[0].parent.exists()
+
+
+@pytest.mark.parametrize("choice_kind", ["confirmed", "corrected", "unknown"])
+def test_explicit_review_preserves_evidence_and_survives_restart(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, choice_kind: str
+) -> None:
+    """Save only explicit choices, with original evidence and idempotent retries."""
+    service = _service(tmp_path)
+
+    def load(_: Path) -> IdentificationService:
+        return service
+
+    monkeypatch.setattr(app_module, "load_identification_service", load)
+    database_path = tmp_path / "db.sqlite3"
+    reviews = ReviewRepository(CatalogDatabase(database_path))
+    with TestClient(app_module.create_app(database_path=database_path)) as raw:
+        client = cast(httpx2.Client, raw)
+        first = client.post(
+            "/api/catalog",
+            json={
+                "preferred_name": "Original name",
+                "linked_identity_id": "usagi-0001",
+            },
+        ).json()
+        other = client.post(
+            "/api/catalog", json={"preferred_name": "Other doll"}
+        ).json()
+        result = client.post(
+            "/api/identify", files={"photo": ("x.png", _photo())}
+        ).json()
+        query_id = str(result["query_id"])
+        assert reviews.get(query_id) is None
+        choice = {
+            "confirmed": first["record_id"],
+            "corrected": other["record_id"],
+            "unknown": "unknown",
+        }[choice_kind]
+        client.patch(
+            f"/api/catalog/{first['record_id']}", json={"preferred_name": "New name"}
+        )
+        before = client.get("/api/catalog").json()
+        url = f"/identify/{query_id}/review"
+        response = client.post(url, data={"choice": choice})
+        assert response.status_code == 200
+        assert "Decision saved" in response.text
+        saved = reviews.get(query_id)
+        assert saved is not None
+        assert saved.decision == choice_kind
+        assert saved.result == result
+        assert saved.candidates[0].preferred_name == "Original name"
+        assert client.post(url, data={"choice": choice}).status_code == 200
+        assert reviews.get(query_id) == saved
+        conflicting = "unknown" if choice != "unknown" else first["record_id"]
+        assert client.post(url, data={"choice": conflicting}).status_code == 409
+        assert client.get("/api/catalog").json() == before
+    with TestClient(app_module.create_app(database_path=database_path)) as raw:
+        client = cast(httpx2.Client, raw)
+        assert "Decision saved" in client.get(url).text
+        assert client.post(url, data={"choice": choice}).status_code == 200
+
+
+def test_review_rejects_missing_expired_and_invented_choices(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Untrusted choices cannot inject evidence or bypass the pending query lifetime."""
+    service = _service(tmp_path)
+
+    def load(_: Path) -> IdentificationService:
+        return service
+
+    monkeypatch.setattr(app_module, "load_identification_service", load)
+    with TestClient(
+        app_module.create_app(database_path=tmp_path / "db.sqlite3")
+    ) as raw:
+        client = cast(httpx2.Client, raw)
+        assert (
+            client.post(
+                "/identify/missing/review", data={"choice": "unknown"}
+            ).status_code
+            == 410
+        )
+        result = client.post(
+            "/api/identify", files={"photo": ("x.png", _photo())}
+        ).json()
+        url = f"/identify/{result['query_id']}/review"
+        assert client.post(url, data={"choice": "invented"}).status_code == 422
+        current = identification_module.time.monotonic()
+        monkeypatch.setattr(
+            identification_module.time, "monotonic", lambda: current + 3601
+        )
+        assert client.post(url, data={"choice": "unknown"}).status_code == 410
+        assert client.get(url).status_code == 404

@@ -19,7 +19,7 @@ def test_database_initialization_is_repeatable(tmp_path: Path) -> None:
 
     with database.connect() as connection:
         migrations = connection.execute(
-            "SELECT version, name FROM schema_migrations"
+            "SELECT version, name FROM schema_migrations ORDER BY version"
         ).fetchall()
         tables = {
             str(row["name"])
@@ -30,7 +30,8 @@ def test_database_initialization_is_repeatable(tmp_path: Path) -> None:
         foreign_keys = connection.execute("PRAGMA foreign_keys").fetchone()
 
     assert [(row["version"], row["name"]) for row in migrations] == [
-        (1, "create_personal_catalog")
+        (1, "create_personal_catalog"),
+        (2, "create_identification_reviews"),
     ]
     assert {"catalog_records", "source_links", "schema_migrations"} <= tables
     assert foreign_keys is not None

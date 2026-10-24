@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% set page_title = "Decision saved | Usagi Shelf" %}
+{% block content %}
+<section class="page-heading">
+  <p class="eyebrow">Photo identification</p>
+  <h1>Decision saved</h1>
+</section>
+<section class="form-section review-receipt">
+  <div class="review-summary">
+  {% if review.selected_record %}
+  <h2>{{ review.selected_record.preferred_name }}</h2>
+  <p>{% if review.decision == 'confirmed' %}You confirmed the first suggestion.{% else %}You chose a different doll from the first suggestion.{% endif %}</p>
+  {% else %}
+  <h2>Marked as unknown</h2>
+  <p>You did not recognize this doll. No catalog record was created.</p>
+  {% endif %}
+  </div>
+  <p>Your decision and the result details are stored privately on this computer. The photo was deleted and no training data was added.</p>
+  <div class="review-actions">
+    {% if review.selected_record %}
+    <a class="button button-secondary" href="/catalog/{{ review.selected_record.record_id }}">Open catalog record</a>
+    {% else %}
+    <a class="button button-secondary" href="/catalog/new">Add a doll manually</a>
+    {% endif %}
+    <a class="button" href="/identify">Identify another doll</a>
+  </div>
+</section>
+<details class="form-section result-provenance">
+  <summary>Saved result details</summary>
+  <p>Saved at {{ review.created_at.strftime('%Y-%m-%d %H:%M UTC') }}.</p>
+  <pre>{{ review.model_dump(mode='json') | tojson(indent=2) }}</pre>
+</details>
+{% endblock %}
