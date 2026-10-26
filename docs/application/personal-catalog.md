@@ -159,3 +159,21 @@ Set `HF_HUB_OFFLINE=1` to require cached model files. `USAGI_DEVICE` selects
 
 Keep the server bound to localhost. Authentication, remote hosting, and glasses
 integration are not part of this slice.
+
+## Sources and availability
+
+Each saved doll has a `Sources and availability` page for shop links, release
+pages, and references. I can add or edit a link, name, notes, and availability:
+unknown, available, sold out, preorder, or discontinued. These describe one
+source, not every seller. The app never fetches those pages automatically.
+
+Checking `Checked today` records the current time. Editing notes preserves that
+date. Changing the URL or availability clears the previous check date unless I
+explicitly check it again. An unchecked source displays `Not checked yet`.
+
+The JSON API supports listing and creating at
+`/api/catalog/{record_id}/sources` and replacing editable fields with PUT at
+`/api/catalog/{record_id}/sources/{source_id}`. Only HTTP and HTTPS links without
+embedded login credentials are accepted. Duplicate links for the same doll are
+rejected. Sources remain in private SQLite and are not published to the public
+shelf. Price tracking and source removal are not implemented.

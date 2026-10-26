@@ -7,6 +7,10 @@
     {% if record and record.record_id %}<p class="record-id">{{ record.record_id }}</p>{% else %}<p>Start with what you know. Everything can be updated later.</p>{% endif %}
   </section>
 
+  {% if record and record.record_id %}
+  <p class="source-navigation"><a class="button button-secondary" href="/catalog/{{ record.record_id }}/sources">Sources and availability</a></p>
+  {% endif %}
+
   {% if error %}
     <div class="error-message" role="alert"><strong>This record was not saved.</strong><span>{{ error }}</span></div>
   {% endif %}

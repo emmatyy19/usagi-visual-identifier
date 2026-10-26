@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% set page_title = "Sources | " ~ record.preferred_name %}
+{% macro fields(value) %}
+<div class="field-grid">
+  <label class="field field-wide">Link<input type="url" name="url" required maxlength="2083" value="{{ value.url or '' }}" placeholder="https://"></label>
+  <label class="field">Name<input name="label" maxlength="200" value="{{ value.label or '' }}" placeholder="Shop or reference name"></label>
+  <label class="field">Availability<select name="availability">{% for key, label in options %}<option value="{{ key }}" {% if value.availability == key %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
+  <label class="field field-wide">Notes<textarea name="notes" maxlength="2000" rows="3">{{ value.notes or '' }}</textarea></label>
+</div>
+<label class="check-choice"><input type="checkbox" name="checked_now" {% if value.checked_now %}checked{% endif %}><span>Checked today<small>I reviewed this link and its availability today.</small></span></label>
+{% endmacro %}
+{% block content %}
+<section class="page-heading">
+  <a class="back-link" href="/catalog/{{ record.record_id }}">← Back to {{ record.preferred_name }}</a>
+  <h1>Sources and availability</h1>
+  <p>Shop links, release details, and references for {{ record.preferred_name }}. Availability is recorded manually for each source.</p>
+</section>
+{% if error %}<div class="error-message" role="alert">{{ error }}</div>{% elif request.query_params.get('saved') %}<p role="status">Source saved.</p>{% endif %}
+{% for source in sources %}
+<section class="form-section source-section">
+  <div class="source-heading">
+    <h2><a href="{{ source.url }}" target="_blank" rel="noopener noreferrer">{{ source.label or source.url.host }} ↗</a></h2>
+    <p>{% if source.reviewed_at %}Last checked {{ source.reviewed_at.strftime('%Y-%m-%d') }} (UTC){% else %}Not checked yet{% endif %} · {{ source.availability.value.replace('_', ' ').capitalize() }}</p>
+  </div>
+  <details {% if error and editing_id == source.source_id %}open{% endif %}>
+    <summary>Edit source</summary>
+    <form method="post" class="source-form" action="/catalog/{{ record.record_id }}/sources">
+      <input type="hidden" name="source_id" value="{{ source.source_id }}">
+      {{ fields(draft if error and editing_id == source.source_id else source) }}
+      <div class="review-actions"><button class="button" type="submit">Save source</button></div>
+    </form>
+  </details>
+</section>
+{% else %}<p>No sources saved yet.</p>{% endfor %}
+<section class="form-section source-section">
+  <h2>Add a source</h2>
+  <form method="post" class="source-form" action="/catalog/{{ record.record_id }}/sources">
+    {{ fields(draft if error and not editing_id else {}) }}
+    <div class="review-actions"><button class="button" type="submit">Add source</button></div>
+  </form>
+</section>
+{% endblock %}
