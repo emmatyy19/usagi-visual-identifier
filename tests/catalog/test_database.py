@@ -32,6 +32,7 @@ def test_database_initialization_is_repeatable(tmp_path: Path) -> None:
     assert [(row["version"], row["name"]) for row in migrations] == [
         (1, "create_personal_catalog"),
         (2, "create_identification_reviews"),
+        (3, "add_source_availability"),
     ]
     assert {"catalog_records", "source_links", "schema_migrations"} <= tables
     assert foreign_keys is not None

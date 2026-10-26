@@ -1,6 +1,6 @@
 # Implementation status
 
-Status reviewed October 22, 2026. This page describes working behavior, not
+Status reviewed October 23, 2026. This page describes working behavior, not
 future intent.
 
 ## Implemented
@@ -11,6 +11,7 @@ future intent.
 | Modeling | Frozen retrieval, aggregation comparisons, linear probe, partial fine tuning | Seven known identities |
 | Evaluation | Final known Session 3 evaluation and unknown validation | No independent unknown final test |
 | Catalog | SQLite migrations and typed create, read, and update API | No delete operation |
+| Sources | Add and edit links, notes, availability, and manual check dates | No automatic shop checks or price tracking |
 | Shelf | Responsive browse, filter, create, and edit pages | No hosted service or authentication |
 | Public viewer | Seven published photos, search, sorting, and doll details | Static collection only; Pages workflow prepared |
 | Covers | Repeatable import from first Session 1 photos | Import requires local collection files |
@@ -24,10 +25,8 @@ future intent.
 
 ## Still planned
 
-1. Add source link and availability operations. The initial source link table
-   exists, but there is no corresponding user workflow yet.
-2. Add optional web assisted discovery with reviewed source links.
-3. Build a native iPhone companion and test glasses capture and display.
+1. Add optional web assisted discovery with reviewed source links.
+2. Build a native iPhone companion and test glasses capture and display.
 
 These are not available through the current interface. Metric learning and
 multi doll detection remain optional experiments, not prerequisites.

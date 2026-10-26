@@ -77,4 +77,13 @@ MIGRATIONS = (
             """,
         ),
     ),
+    Migration(
+        version=3,
+        name="add_source_availability",
+        statements=(
+            """ALTER TABLE source_links ADD COLUMN availability TEXT NOT NULL
+            DEFAULT 'unknown' CHECK (availability IN
+            ('unknown', 'available', 'sold_out', 'preorder', 'discontinued'))""",
+        ),
+    ),
 )

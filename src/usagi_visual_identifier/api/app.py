@@ -12,6 +12,7 @@ from usagi_visual_identifier.api.identification import (
     load_identification_service,
     register_identification_routes,
 )
+from usagi_visual_identifier.api.sources import register_source_routes
 from usagi_visual_identifier.api.web import register_web_routes
 from usagi_visual_identifier.catalog.database import CatalogDatabase
 from usagi_visual_identifier.catalog.models import (
@@ -50,6 +51,7 @@ def create_app(*, database_path: Path | None = None) -> FastAPI:
     app.state.catalog_database = database
 
     register_web_routes(app=app)
+    register_source_routes(app)
     register_identification_routes(
         app,
         factory=lambda: load_identification_service(
